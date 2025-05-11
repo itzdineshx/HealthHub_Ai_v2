@@ -17,14 +17,12 @@ const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Profile = lazy(() => import("./pages/Profile"));
 const DoctorPanel = lazy(() => import("./pages/DoctorPanel"));
 const AdminPanel = lazy(() => import("./pages/AdminPanel"));
-const FitnessTrainer = lazy(() => import("./pages/FitnessTrainer"));
-const GymTraining = lazy(() => import("./pages/GymTraining"));
+const TrainingDashboard = lazy(() => import("./pages/TrainingDashboard"));
 const HealthRecords = lazy(() => import("./pages/HealthRecords"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const RiskPlanner = lazy(() => import("./pages/RiskPlanner"));
 const AccountManager = lazy(() => import("./pages/AccountManager"));
 const Risk = lazy(() => import("./pages/Risk"));
-const Trainer = lazy(() => import("./pages/Trainer"));
 const Diet = lazy(() => import("./pages/Diet"));
 const Chat = lazy(() => import("./pages/Chat"));
 const DiseasePredictor = lazy(() => import("./pages/DiseasePredictor"));
@@ -77,12 +75,10 @@ const App = () => {
       <Route path="doctor-panel" element={<ProtectedRoute element={<DoctorPanel />} requiredRole="doctor" />} />
       <Route path="health-records" element={<ProtectedRoute element={<HealthRecords />} />} />
       <Route path="admin" element={<ProtectedRoute element={<AdminPanel />} requiredRole="admin" />} />
-      <Route path="fitness-trainer" element={<ProtectedRoute element={<FitnessTrainer />} />} />
-      <Route path="gym-training" element={<ProtectedRoute element={<GymTraining />} />} />
+      <Route path="training-dashboard" element={<ProtectedRoute element={<TrainingDashboard />} />} />
       <Route path="risk-planner" element={<ProtectedRoute element={<RiskPlanner />} />} />
       <Route path="account" element={<ProtectedRoute element={<AccountManager />} />} />
       <Route path="risk" element={<ProtectedRoute element={<Risk />} />} />
-      <Route path="trainer" element={<ProtectedRoute element={<Trainer />} />} />
       <Route path="diet" element={<ProtectedRoute element={<Diet />} />} />
       <Route path="chat" element={<ProtectedRoute element={<Chat />} />} />
       <Route path="ocr" element={<ProtectedRoute element={<Ocr />} />} />

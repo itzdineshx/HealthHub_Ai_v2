@@ -10,6 +10,7 @@ import DoctorPanel from '@/pages/DoctorPanel';
 import TestLogin from '@/pages/TestLogin';
 import LinkTest from '@/pages/LinkTest';
 import ImportTest from '@/pages/ImportTest';
+import TrainingDashboard from '@/pages/TrainingDashboard';
 
 const AppRoutes = () => {
   const { isAuthenticated, user } = useAuth();
@@ -50,6 +51,13 @@ const AppRoutes = () => {
       <Route path="/dashboard#ai-chat" element={
         <PrivateRoute>
           <Dashboard />
+        </PrivateRoute>
+      } />
+      
+      {/* New combined Training Dashboard route */}
+      <Route path="/training-dashboard" element={
+        <PrivateRoute>
+          <TrainingDashboard />
         </PrivateRoute>
       } />
       
