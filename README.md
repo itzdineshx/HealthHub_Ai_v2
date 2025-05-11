@@ -1,6 +1,6 @@
 # 💙 HealthHub.AI — Your Smart Personal Health Companion
 
-![HealthHub Banner](https://tenor.com/en-GB/view/on-my-way-snoopy-peanuts-im-coming-heading-there-now-gif-22023900)
+<div class="tenor-gif-embed" data-postid="22023900" data-share-method="host" data-aspect-ratio="0.6" data-width="100%"><a href="https://tenor.com/view/on-my-way-snoopy-peanuts-im-coming-heading-there-now-gif-22023900">On My Way Snoopy Sticker</a>from <a href="https://tenor.com/search/on+my+way-stickers">On My Way Stickers</a></div> <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
 
 A full-stack AI-powered health platform for patients, doctors, and administrators. It integrates health monitoring, disease prediction, personal trainers, and a chatbot assistant into a single unified experience.
 
