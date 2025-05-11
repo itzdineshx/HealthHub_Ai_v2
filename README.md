@@ -1,8 +1,8 @@
 # 💙 HealthHub.AI — Your Smart Personal Health Companion
 
-<div class="tenor-gif-embed" data-postid="22023900" data-share-method="host" data-aspect-ratio="0.6" data-width="100%"><a href="https://tenor.com/view/on-my-way-snoopy-peanuts-im-coming-heading-there-now-gif-22023900">On My Way Snoopy Sticker</a>from <a href="https://tenor.com/search/on+my+way-stickers">On My Way Stickers</a></div> <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
-
 A full-stack AI-powered health platform for patients, doctors, and administrators. It integrates health monitoring, disease prediction, personal trainers, and a chatbot assistant into a single unified experience.
+
+![Demo Screenshot](https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExa3Q1dzVhZjEwbjJuMzhnZmpubDJnc3Z5bnl0Ym5zd3hpMzN2ZW5vZSZlcD12MV9zdGlja2Vyc19zZWFyY2gmY3Q9cw/zOU33C79GYLcyg6dWI/giphy.gif)
 
 🧠 Powered by React + FastAPI + AI + MediaPipe + Blockchain  
 🔒 HIPAA-conscious architecture using Web3 record anchoring  
@@ -72,7 +72,7 @@ A full-stack AI-powered health platform for patients, doctors, and administrator
 
 ## 📸 Demo Preview
 
-![Demo Screenshot](https://media.giphy.com/media/ZVik7pBtu9dNS/giphy.gif)
+![Demo Screenshot](https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExa3Q1dzVhZjEwbjJuMzhnZmpubDJnc3Z5bnl0Ym5zd3hpMzN2ZW5vZSZlcD12MV9zdGlja2Vyc19zZWFyY2gmY3Q9cw/2jTsdKLtn8JL7zH1iK/giphy.gif)
 
 📹 Full App Tour: Coming Soon...
 
@@ -208,6 +208,4 @@ MIT License. Use it, remix it, improve it.
 ## 💬 Support Us
 
 If you like HealthHub.AI — 🌟 star the repo, share it, and feel free to contribute.
-
-![Thank You](https://media.giphy.com/media/xT0xeJpnrWC4XWblEk/giphy.gif)
 
