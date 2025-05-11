@@ -1,6 +1,6 @@
 # 💙 HealthHub.AI — Your Smart Personal Health Companion
 
-![HealthHub Banner](https://media.giphy.com/media/jpZ0C0rebiwqM/giphy.gif)
+![HealthHub Banner](https://tenor.com/en-GB/view/on-my-way-snoopy-peanuts-im-coming-heading-there-now-gif-22023900)
 
 A full-stack AI-powered health platform for patients, doctors, and administrators. It integrates health monitoring, disease prediction, personal trainers, and a chatbot assistant into a single unified experience.
 
