@@ -211,4 +211,3 @@ If you like HealthHub.AI — 🌟 star the repo, share it, and feel free to cont
 
 ![Thank You](https://media.giphy.com/media/xT0xeJpnrWC4XWblEk/giphy.gif)
 
-```
