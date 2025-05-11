@@ -107,6 +107,78 @@ const riskPieData = [
 const COLORS = ['#ef4444', '#f97316', '#a3e635', '#14b8a6'];
 const DARK_COLORS = ['#f87171', '#fb923c', '#bef264', '#2dd4bf'];
 
+interface HealthFactorContentProps {
+  factorKey: string;
+  data: typeof HEALTH_FACTORS[keyof typeof HEALTH_FACTORS];
+  getScoreColor: (score: number) => string;
+  getRiskBadgeColor: (risk: string) => string;
+  setActiveTab: (tab: string) => void;
+}
+
+const HealthFactorContent = ({ factorKey, data, getScoreColor, getRiskBadgeColor, setActiveTab }: HealthFactorContentProps) => (
+  <TabsContent key={factorKey} value={factorKey} className="space-y-4 transition-opacity duration-500 data-[state=inactive]:opacity-0 data-[state=active]:opacity-100">
+    <Card className="dark:bg-slate-800 dark:border-slate-700 animate-slideInLeft">
+      <CardHeader className="flex flex-row items-center justify-between pb-2">
+        <div>
+          <CardTitle className="text-2xl dark:text-white">{factorKey.charAt(0).toUpperCase() + factorKey.slice(1)} Health</CardTitle>
+          <CardDescription className="dark:text-slate-300">Assessment score and risk factors</CardDescription>
+        </div>
+        <div className={`text-4xl font-bold ${getScoreColor(data.score)}`}>
+          {data.score}
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-4">
+          <div>
+            <div className="flex justify-between items-center mb-1">
+              <span className="text-sm font-medium dark:text-slate-300">Score</span>
+              <span className={`text-sm ${getScoreColor(data.score)}`}>{data.riskLevel} Risk</span>
+            </div>
+            <Progress value={data.score} className="h-2 dark:bg-slate-700" />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+            <div className="animate-fadeInUp">
+              <h3 className="font-medium mb-2 dark:text-white">Key Risk Factors</h3>
+              <ScrollArea className="h-[200px] rounded-md border p-4 dark:border-slate-700 dark:bg-slate-900/50">
+                <div className="space-y-2">
+                  {data.factors.map((factor, idx) => (
+                    <div key={idx} className="flex justify-between items-center">
+                      <span className="text-sm text-muted-foreground dark:text-slate-400">{factor.name}</span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium dark:text-white">{factor.value}</span>
+                        <span className={`text-xs px-2 py-1 rounded-full ${getRiskBadgeColor(factor.risk)}`}>
+                          {factor.risk}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </ScrollArea>
+            </div>
+            
+            <div className="animate-fadeInUp">
+              <h3 className="font-medium mb-2 dark:text-white">Health Recommendations</h3>
+              <ScrollArea className="h-[200px] rounded-md border p-4 dark:border-slate-700 dark:bg-slate-900/50">
+                <ul className="space-y-2 list-disc pl-5">
+                  {data.recommendations.map((rec, idx) => (
+                    <li key={idx} className="text-sm text-muted-foreground dark:text-slate-400">{rec}</li>
+                  ))}
+                </ul>
+              </ScrollArea>
+            </div>
+          </div>
+        </div>
+      </CardContent>
+      <CardFooter>
+        <Button variant="outline" className="w-full dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-700" onClick={() => setActiveTab("overview")}>
+          Return to Overview
+        </Button>
+      </CardFooter>
+    </Card>
+  </TabsContent>
+);
+
 const HealthAssessment = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const [isLoaded, setIsLoaded] = useState(false);
@@ -174,9 +246,9 @@ const HealthAssessment = () => {
             <p className="text-muted-foreground dark:text-slate-400">Loading your health assessment...</p>
           </div>
         ) : (
-          <>
+          <div className="animate-fadeIn">
             <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="space-y-4">
-              <TabsList className="grid grid-cols-5 md:w-[600px] dark:bg-slate-800">
+              <TabsList className="grid grid-cols-2 md:grid-cols-5 w-full md:w-auto dark:bg-slate-800">
                 <TabsTrigger value="overview" className="dark:data-[state=active]:bg-forest dark:data-[state=active]:text-white">Overview</TabsTrigger>
                 <TabsTrigger value="cardiovascular" className="dark:data-[state=active]:bg-forest dark:data-[state=active]:text-white">Heart</TabsTrigger>
                 <TabsTrigger value="metabolic" className="dark:data-[state=active]:bg-forest dark:data-[state=active]:text-white">Metabolic</TabsTrigger>
@@ -184,9 +256,9 @@ const HealthAssessment = () => {
                 <TabsTrigger value="cognitive" className="dark:data-[state=active]:bg-forest dark:data-[state=active]:text-white">Cognitive</TabsTrigger>
               </TabsList>
 
-              <TabsContent value="overview" className="space-y-4">
+              <TabsContent value="overview" className="space-y-4 transition-opacity duration-500 data-[state=inactive]:opacity-0 data-[state=active]:opacity-100">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Card className="dark:bg-slate-800 dark:border-slate-700">
+                  <Card className="dark:bg-slate-800 dark:border-slate-700 animate-slideInLeft">
                     <CardHeader className="pb-2">
                       <CardTitle className="dark:text-white">Overall Health Score</CardTitle>
                       <CardDescription className="dark:text-slate-300">Based on your health information and assessments</CardDescription>
@@ -214,7 +286,7 @@ const HealthAssessment = () => {
                     </CardContent>
                   </Card>
 
-                  <Card className="dark:bg-slate-800 dark:border-slate-700">
+                  <Card className="dark:bg-slate-800 dark:border-slate-700 animate-slideInRight">
                     <CardHeader className="pb-2">
                       <CardTitle className="dark:text-white">Health Risk Profile</CardTitle>
                       <CardDescription className="dark:text-slate-300">Distribution of health risk factors</CardDescription>
@@ -232,6 +304,7 @@ const HealthAssessment = () => {
                               paddingAngle={2}
                               dataKey="value"
                               label={({ name }) => name}
+                              isAnimationActive={true}
                             >
                               {riskPieData.map((entry, index) => (
                                 <Cell key={`cell-${index}`} fill={isDarkMode ? DARK_COLORS[index % DARK_COLORS.length] : COLORS[index % COLORS.length]} />
@@ -245,7 +318,7 @@ const HealthAssessment = () => {
                   </Card>
                 </div>
 
-                <Card className="dark:bg-slate-800 dark:border-slate-700">
+                <Card className="dark:bg-slate-800 dark:border-slate-700 animate-slideInUp">
                   <CardHeader>
                     <CardTitle className="dark:text-white">Health Trends</CardTitle>
                     <CardDescription className="dark:text-slate-300">Track your progress over time</CardDescription>
@@ -260,16 +333,16 @@ const HealthAssessment = () => {
                           <YAxis yAxisId="right" orientation="right" className="dark:text-slate-300" />
                           <Tooltip contentStyle={{ backgroundColor: isDarkMode ? '#1e293b' : '#fff', borderColor: isDarkMode ? '#334155' : '#e2e8f0', color: isDarkMode ? '#f8fafc' : '#1e293b' }} />
                           <Legend className="dark:text-slate-300" />
-                          <Line yAxisId="left" type="monotone" dataKey="weight" stroke={isDarkMode ? "#a78bfa" : "#8884d8"} activeDot={{ r: 8 }} />
-                          <Line yAxisId="left" type="monotone" dataKey="bloodPressure" stroke={isDarkMode ? "#4ade80" : "#82ca9d"} />
-                          <Line yAxisId="right" type="monotone" dataKey="cholesterol" stroke={isDarkMode ? "#fcd34d" : "#ffc658"} />
+                          <Line yAxisId="left" type="monotone" dataKey="weight" stroke={isDarkMode ? "#a78bfa" : "#8884d8"} activeDot={{ r: 8 }} isAnimationActive={true} />
+                          <Line yAxisId="left" type="monotone" dataKey="bloodPressure" stroke={isDarkMode ? "#4ade80" : "#82ca9d"} isAnimationActive={true} />
+                          <Line yAxisId="right" type="monotone" dataKey="cholesterol" stroke={isDarkMode ? "#fcd34d" : "#ffc658"} isAnimationActive={true} />
                         </LineChart>
                       </ResponsiveContainer>
                     </div>
                   </CardContent>
                 </Card>
 
-                <Alert variant="default" className="bg-sage/10 dark:bg-forest/20 dark:border-forest/30">
+                <Alert variant="default" className="bg-sage/10 dark:bg-forest/20 dark:border-forest/30 animate-slideInUp">
                   <AlertCircle className="h-4 w-4 dark:text-sage-light" />
                   <AlertTitle className="dark:text-white">Important Health Insight</AlertTitle>
                   <AlertDescription className="dark:text-slate-300">
@@ -280,70 +353,10 @@ const HealthAssessment = () => {
               </TabsContent>
 
               {Object.entries(HEALTH_FACTORS).map(([key, data]) => (
-                <TabsContent key={key} value={key} className="space-y-4">
-                  <Card className="dark:bg-slate-800 dark:border-slate-700">
-                    <CardHeader className="flex flex-row items-center justify-between pb-2">
-                      <div>
-                        <CardTitle className="text-2xl dark:text-white">{key.charAt(0).toUpperCase() + key.slice(1)} Health</CardTitle>
-                        <CardDescription className="dark:text-slate-300">Assessment score and risk factors</CardDescription>
-                      </div>
-                      <div className={`text-4xl font-bold ${getScoreColor(data.score)}`}>
-                        {data.score}
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-4">
-                        <div>
-                          <div className="flex justify-between items-center mb-1">
-                            <span className="text-sm font-medium dark:text-slate-300">Score</span>
-                            <span className={`text-sm ${getScoreColor(data.score)}`}>{data.riskLevel} Risk</span>
-                          </div>
-                          <Progress value={data.score} className="h-2 dark:bg-slate-700" />
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                          <div>
-                            <h3 className="font-medium mb-2 dark:text-white">Key Risk Factors</h3>
-                            <ScrollArea className="h-[200px] rounded-md border p-4 dark:border-slate-700 dark:bg-slate-900/50">
-                              <div className="space-y-2">
-                                {data.factors.map((factor, idx) => (
-                                  <div key={idx} className="flex justify-between items-center">
-                                    <span className="text-sm text-muted-foreground dark:text-slate-400">{factor.name}</span>
-                                    <div className="flex items-center gap-2">
-                                      <span className="text-sm font-medium dark:text-white">{factor.value}</span>
-                                      <span className={`text-xs px-2 py-1 rounded-full ${getRiskBadgeColor(factor.risk)}`}>
-                                        {factor.risk}
-                                      </span>
-                                    </div>
-                                  </div>
-                                ))}
-                              </div>
-                            </ScrollArea>
-                          </div>
-                          
-                          <div>
-                            <h3 className="font-medium mb-2 dark:text-white">Health Recommendations</h3>
-                            <ScrollArea className="h-[200px] rounded-md border p-4 dark:border-slate-700 dark:bg-slate-900/50">
-                              <ul className="space-y-2 list-disc pl-5">
-                                {data.recommendations.map((rec, idx) => (
-                                  <li key={idx} className="text-sm text-muted-foreground dark:text-slate-400">{rec}</li>
-                                ))}
-                              </ul>
-                            </ScrollArea>
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                    <CardFooter>
-                      <Button variant="outline" className="w-full dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-700" onClick={() => setActiveTab("overview")}>
-                        Return to Overview
-                      </Button>
-                    </CardFooter>
-                  </Card>
-                </TabsContent>
+                <HealthFactorContent key={key} factorKey={key} data={data} getScoreColor={getScoreColor} getRiskBadgeColor={getRiskBadgeColor} setActiveTab={setActiveTab} />
               ))}
             </Tabs>
-          </>
+          </div>
         )}
       </div>
     </Layout>

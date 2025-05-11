@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { AlertCircle, ArrowRight, BarChart4, CheckCircle2, ChevronRight, Loader2, Save, Thermometer, UploadCloud } from "lucide-react";
@@ -370,19 +369,28 @@ const DiseaseMetrics = () => {
                     />
                   </CardContent>
                   <CardFooter>
-                    <Button onClick={handleSubmit} className="w-full" disabled={submitting}>
-                      {submitting ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Processing...
-                        </>
-                      ) : (
-                        <>
-                          {submitted ? "Update Assessment" : "Generate Risk Assessment"}
-                          <ArrowRight className="ml-2 h-4 w-4" />
-                        </>
-                      )}
-                    </Button>
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: 0.2 }}
+                    >
+                      <Button 
+                        className="w-full bg-forest hover:bg-forest-dark text-white dark:bg-sage dark:text-forest dark:hover:bg-sage-light transition-colors"
+                        onClick={handleSubmit}
+                        disabled={submitting}
+                      >
+                        {submitting ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Submitting...
+                          </>
+                        ) : (
+                          <>  
+                            <Save className="mr-2 h-4 w-4" /> Save and Assess Risk
+                          </>
+                        )}
+                      </Button>
+                    </motion.div>
                   </CardFooter>
                 </Card>
               </div>

@@ -138,6 +138,9 @@ const HealthRecords = () => {
   const mediaStreamRef = useRef<MediaStream | null>(null);
   const [showUploadDialog, setShowUploadDialog] = useState(false);
   
+  // State for managing dialog content based on upload status
+  const [uploadStatus, setUploadStatus] = useState('idle'); // 'idle', 'selectingType', 'selectingFile', 'previewing', 'uploading', 'success', 'error'
+  
   useEffect(() => {
     setIsLoaded(true);
     // Load user's documents when component mounts
@@ -380,26 +383,25 @@ const HealthRecords = () => {
   };
 
   const handleUploadClick = () => {
-    setUploadError(null);
-    setShowTypeDialog(true);
+    setShowUploadDialog(true); // Use the main dialog
+    setUploadStatus('selectingType'); // Set status to selecting type
   };
 
   const handleFileTypeSelection = (type: string) => {
     setDocumentType(type);
-    
-    // Reset any previous file
-    setSelectedFile(null);
-    setFilePreview(null);
-    setShowTypeDialog(false);
-    
-    // Show upload options dialog (file or camera)
-    setShowUploadDialog(true);
+    setUploadStatus('selectingFile'); // Move to file selection step
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      validateAndProcessFile(e.target.files[0]);
+    const file = e.target.files?.[0];
+    if (file) {
+      handleFileSelected(file);
     }
+  };
+
+  const handleFileSelected = (file: File) => {
+    validateAndProcessFile(file);
+    setUploadStatus('previewing');
   };
 
   const validateAndProcessFile = (file: File) => {
@@ -452,36 +454,22 @@ const HealthRecords = () => {
   };
 
   const handleFileUpload = async () => {
-    if (!documentType) {
-      setUploadError("Please select a document type first");
-      return;
-    }
-
-    if (!selectedFile) {
-      setUploadError("No file selected");
-      return;
-    }
-
+    if (!selectedFile || !documentType) return;
+    
+    setIsUploading(true);
+    setUploadStatus('uploading'); // Set status to uploading
+    setUploadError(null); // Clear previous errors
+    
+    const metadata: DocumentMetadata = {
+      fileName: selectedFile.name,
+      fileType: selectedFile.type,
+      fileSize: selectedFile.size,
+      category: documentType,
+      uploadedAt: new Date(),
+      notes: additionalNotes || undefined
+    };
+    
     try {
-      setIsUploading(true);
-      setUploadError(null);
-
-      // Create form data for file upload
-      const formData = new FormData();
-      formData.append('file', selectedFile);
-      
-      // Create metadata for the document
-      const documentData: DocumentMetadata = {
-        fileName: selectedFile.name,
-        fileType: selectedFile.type,
-        fileSize: selectedFile.size,
-        category: documentType,
-        uploadedAt: new Date(),
-        notes: additionalNotes || undefined
-      };
-      
-      formData.append('metadata', JSON.stringify(documentData));
-
       // Get auth token (assuming it's stored in localStorage)
       const token = localStorage.getItem('authToken');
       
@@ -494,6 +482,10 @@ const HealthRecords = () => {
         // Use the real backend
         try {
           // Upload the file to the server
+          const formData = new FormData();
+          formData.append('file', selectedFile);
+          formData.append('metadata', JSON.stringify(metadata));
+          
           const controller = new AbortController();
           const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout for uploads
           
@@ -532,7 +524,7 @@ const HealthRecords = () => {
               error.message.includes("Network Error") ||
               error.message.includes("The operation was aborted"))) {
             console.warn("Error with backend, falling back to mock implementation", error);
-            result = await mockUploadDocument(selectedFile, documentData);
+            result = await mockUploadDocument(selectedFile, metadata);
           } else {
             // Re-throw non-network errors
             throw error;
@@ -541,7 +533,7 @@ const HealthRecords = () => {
       } else {
         // Use the mock implementation
         console.warn("Backend server connectivity test failed, using mock implementation");
-        result = await mockUploadDocument(selectedFile, documentData);
+        result = await mockUploadDocument(selectedFile, metadata);
       }
 
       // Handle successful upload
@@ -575,6 +567,7 @@ const HealthRecords = () => {
       }
       
       setUploadError(errorMessage);
+      setUploadStatus('error'); // Set status to error
     } finally {
       setIsUploading(false);
     }
@@ -586,6 +579,14 @@ const HealthRecords = () => {
     setUploadError(null);
     setAdditionalNotes("");
     setDocumentType("");
+    setUploadStatus('idle'); // Reset upload status
+    setShowUploadDialog(false); // Close the main dialog
+    if (mediaStreamRef.current) {
+      mediaStreamRef.current.getTracks().forEach(track => track.stop());
+    }
+    if (videoRef.current) {
+      videoRef.current.srcObject = null;
+    }
   };
 
   const container = {
@@ -810,7 +811,7 @@ const HealthRecords = () => {
                   <TabsContent value="medical" className="space-y-4">
                     <div className="flex justify-between items-center">
                       <h2 className="text-lg font-semibold text-forest dark:text-sage-light">Recent Medical Records</h2>
-                      <Button variant="outline">
+                      <Button variant="outline" onClick={() => setShowUploadDialog(true)}>
                         <FileText className="mr-2 h-4 w-4" />
                         Add Record
                       </Button>
@@ -850,73 +851,99 @@ const HealthRecords = () => {
                   <TabsContent value="lab" className="space-y-4">
                     <div className="flex justify-between items-center">
                       <h2 className="text-lg font-semibold text-forest dark:text-sage-light">Recent Lab Results</h2>
-                      <Button variant="outline">
+                      <Button variant="outline" onClick={() => setShowUploadDialog(true)}>
                         <FlaskConical className="mr-2 h-4 w-4" />
                         Add Result
                       </Button>
                     </div>
                     
-                    {[
-                      { name: "Blood Test", date: "Apr 22, 2025", lab: "City Medical Lab" },
-                      { name: "Cholesterol Test", date: "Mar 15, 2025", lab: "Healthcare Diagnostics" },
-                      { name: "Urinalysis", date: "Feb 01, 2025", lab: "Community Labs" }
-                    ].map((result, index) => (
-                      <div key={index} className="flex items-center justify-between p-3 bg-sage-light/10 dark:bg-forest-light/10 hover:bg-sage-light/20 dark:hover:bg-forest-light/20 rounded-lg transition-all border border-sage/10 dark:border-sage/20">
-                        <div>
-                          <p className="font-medium text-forest-dark dark:text-sage-light">{result.name}</p>
-                          <p className="text-sm text-muted-foreground dark:text-sage/70">{result.date} - {result.lab}</p>
-                        </div>
-                        <Button variant="ghost" size="sm" className="hover:bg-forest/10 dark:hover:bg-sage/10">View</Button>
-                      </div>
-                    ))}
+                    <ScrollArea className="h-[300px] pr-4">
+                      <motion.div
+                        className="space-y-3"
+                        variants={container}
+                        initial="hidden"
+                        animate="show"
+                      >
+                        {[
+                          { name: "Blood Test", date: "Apr 22, 2025", lab: "City Medical Lab" },
+                          { name: "Cholesterol Test", date: "Mar 15, 2025", lab: "Healthcare Diagnostics" },
+                          { name: "Urinalysis", date: "Feb 01, 2025", lab: "Community Labs" }
+                        ].map((result, index) => (
+                          <motion.div key={index} className="flex items-center justify-between p-3 bg-sage-light/10 dark:bg-forest-light/10 hover:bg-sage-light/20 dark:hover:bg-forest-light/20 rounded-lg transition-all border border-sage/10 dark:border-sage/20" variants={item}>
+                            <div>
+                              <p className="font-medium text-forest-dark dark:text-sage-light">{result.name}</p>
+                              <p className="text-sm text-muted-foreground dark:text-sage/70">{result.date} - {result.lab}</p>
+                            </div>
+                            <Button variant="ghost" size="sm" className="hover:bg-forest/10 dark:hover:bg-sage/10">View</Button>
+                          </motion.div>
+                        ))}
+                      </motion.div>
+                    </ScrollArea>
                   </TabsContent>
                   
                   <TabsContent value="prescriptions" className="space-y-4">
                     <div className="flex justify-between items-center">
                       <h2 className="text-lg font-semibold text-forest dark:text-sage-light">Active Prescriptions</h2>
-                      <Button variant="outline">
+                      <Button variant="outline" onClick={() => setShowUploadDialog(true)}>
                         <FileText className="mr-2 h-4 w-4" />
                         Add Prescription
                       </Button>
                     </div>
                     
-                    {[
-                      { name: "Amoxicillin", date: "Apr 28, 2025", doctor: "Dr. Emily Chen" },
-                      { name: "Lisinopril", date: "Mar 10, 2025", doctor: "Dr. Robert Johnson" },
-                      { name: "Vitamin D", date: "Jan 25, 2025", doctor: "Dr. Sarah Williams" }
-                    ].map((prescription, index) => (
-                      <div key={index} className="flex items-center justify-between p-3 bg-sage-light/10 dark:bg-forest-light/10 hover:bg-sage-light/20 dark:hover:bg-forest-light/20 rounded-lg transition-all border border-sage/10 dark:border-sage/20">
-                        <div>
-                          <p className="font-medium text-forest-dark dark:text-sage-light">{prescription.name}</p>
-                          <p className="text-sm text-muted-foreground dark:text-sage/70">Prescribed on {prescription.date} by {prescription.doctor}</p>
-                        </div>
-                        <Button variant="ghost" size="sm" className="hover:bg-forest/10 dark:hover:bg-sage/10">View</Button>
-                      </div>
-                    ))}
+                    <ScrollArea className="h-[300px] pr-4">
+                      <motion.div
+                        className="space-y-3"
+                        variants={container}
+                        initial="hidden"
+                        animate="show"
+                      >
+                        {[
+                          { name: "Amoxicillin", date: "Apr 28, 2025", doctor: "Dr. Emily Chen" },
+                          { name: "Lisinopril", date: "Mar 10, 2025", doctor: "Dr. Robert Johnson" },
+                          { name: "Vitamin D", date: "Jan 25, 2025", doctor: "Dr. Sarah Williams" }
+                        ].map((prescription, index) => (
+                          <motion.div key={index} className="flex items-center justify-between p-3 bg-sage-light/10 dark:bg-forest-light/10 hover:bg-sage-light/20 dark:hover:bg-forest-light/20 rounded-lg transition-all border border-sage/10 dark:border-sage/20" variants={item}>
+                            <div>
+                              <p className="font-medium text-forest-dark dark:text-sage-light">{prescription.name}</p>
+                              <p className="text-sm text-muted-foreground dark:text-sage/70">Prescribed on {prescription.date} by {prescription.doctor}</p>
+                            </div>
+                            <Button variant="ghost" size="sm" className="hover:bg-forest/10 dark:hover:bg-sage/10">View</Button>
+                          </motion.div>
+                        ))}
+                      </motion.div>
+                    </ScrollArea>
                   </TabsContent>
                   
                   <TabsContent value="vaccinations" className="space-y-4">
                     <div className="flex justify-between items-center">
-                      <h2 className="text-lg font-semibold text-forest dark:text-sage-light">Vaccination Records</h2>
-                      <Button variant="outline">
+                      <h2 className="text-lg font-semibold text-forest dark:text-sage-light">Recent Vaccinations</h2>
+                      <Button variant="outline" onClick={() => setShowUploadDialog(true)}>
                         <Activity className="mr-2 h-4 w-4" />
                         Add Vaccination
                       </Button>
                     </div>
                     
-                    {[
-                      { name: "Influenza", date: "Oct 15, 2024" },
-                      { name: "Tdap", date: "Jun 01, 2023" },
-                      { name: "MMR", date: "Aug 10, 2000" }
-                    ].map((vaccination, index) => (
-                      <div key={index} className="flex items-center justify-between p-3 bg-sage-light/10 dark:bg-forest-light/10 hover:bg-sage-light/20 dark:hover:bg-forest-light/20 rounded-lg transition-all border border-sage/10 dark:border-sage/20">
-                        <div>
-                          <p className="font-medium text-forest-dark dark:text-sage-light">{vaccination.name}</p>
-                          <p className="text-sm text-muted-foreground dark:text-sage/70">Administered on {vaccination.date}</p>
-                        </div>
-                        <Button variant="ghost" size="sm" className="hover:bg-forest/10 dark:hover:bg-sage/10">View</Button>
-                      </div>
-                    ))}
+                    <ScrollArea className="h-[300px] pr-4">
+                      <motion.div
+                        className="space-y-3"
+                        variants={container}
+                        initial="hidden"
+                        animate="show"
+                      >
+                        {[
+                          { name: "Influenza Vaccine", date: "Oct 10, 2024", clinic: "Local Health Clinic" },
+                          { name: "Tetanus Booster", date: "Jun 18, 2023", clinic: "Family Care Physician" }
+                        ].map((vaccination, index) => (
+                          <motion.div key={index} className="flex items-center justify-between p-3 bg-sage-light/10 dark:bg-forest-light/10 hover:bg-sage-light/20 dark:hover:bg-forest-light/20 rounded-lg transition-all border border-sage/10 dark:border-sage/20" variants={item}>
+                            <div>
+                              <p className="font-medium text-forest-dark dark:text-sage-light">{vaccination.name}</p>
+                              <p className="text-sm text-muted-foreground dark:text-sage/70">{vaccination.date} at {vaccination.clinic}</p>
+                            </div>
+                            <Button variant="ghost" size="sm" className="hover:bg-forest/10 dark:hover:bg-sage/10">View</Button>
+                          </motion.div>
+                        ))}
+                      </motion.div>
+                    </ScrollArea>
                   </TabsContent>
                 </Tabs>
               </CardContent>
@@ -1026,32 +1053,29 @@ const HealthRecords = () => {
                     </Alert>
                   )}
                   
-                  <div>
-                    <Label htmlFor="record-type" className="text-forest-dark dark:text-sage">Record Type</Label>
-                    <select 
-                      id="record-type"
-                      className="w-full mt-1 rounded-md border border-input bg-background text-foreground dark:text-sage-light dark:bg-forest-dark px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                      value={documentType}
-                      onChange={(e) => setDocumentType(e.target.value)}
-                    >
-                      <option value="">Select a type...</option>
-                      <option value="Medical Record">Medical Record</option>
-                      <option value="Lab Result">Lab Result</option>
-                      <option value="Prescription">Prescription</option>
-                      <option value="Vaccination">Vaccination</option>
-                      <option value="Discharge Summary">Discharge Summary</option>
-                      <option value="Referral Letter">Referral Letter</option>
-                    </select>
+                  <div className="grid gap-2">
+                    <Label htmlFor="document-type">Document type</Label>
+                    <Select onValueChange={handleFileTypeSelection} value={documentType}>
+                      <SelectTrigger className="w-full" id="document-type" title="Select document type">
+                        <SelectValue placeholder="Select document type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Lab Result">Lab Result</SelectItem>
+                        <SelectItem value="Imaging Report">Imaging Report</SelectItem>
+                        <SelectItem value="Prescription">Prescription</SelectItem>
+                        <SelectItem value="Vaccination Record">Vaccination Record</SelectItem>
+                        <SelectItem value="Other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                   
-                  <div>
-                    <Label htmlFor="additional-notes" className="text-forest-dark dark:text-sage">Additional Notes</Label>
-                    <Input 
-                      id="additional-notes" 
-                      placeholder="Add any notes about this record"
-                      className="dark:bg-forest-dark dark:text-sage-light dark:border-sage/30 dark:placeholder:text-sage/50"
+                  <div className="grid gap-2">
+                    <Label htmlFor="additional-notes">Additional Notes (Optional):</Label>
+                    <Input
+                      id="additional-notes"
                       value={additionalNotes}
                       onChange={(e) => setAdditionalNotes(e.target.value)}
+                      placeholder="e.g., Annual checkup results"
                     />
                   </div>
                   
@@ -1224,43 +1248,6 @@ const HealthRecords = () => {
               <span>Take Photo</span>
             </Button>
           </div>
-        </DialogContent>
-      </Dialog>
-      
-      {/* Document Type Selection Dialog */}
-      <Dialog open={showTypeDialog} onOpenChange={setShowTypeDialog}>
-        <DialogContent className="sm:max-w-md" aria-describedby="doc-type-dialog-description">
-          <DialogHeader>
-            <DialogTitle className="text-forest dark:text-sage-light">What type of file are you uploading?</DialogTitle>
-            <DialogDescription id="doc-type-dialog-description">
-              Select the category that best describes your document.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <Select onValueChange={handleFileTypeSelection}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select a document type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Prescription">Prescription</SelectItem>
-                <SelectItem value="Lab Report">Lab Report</SelectItem>
-                <SelectItem value="Discharge Summary">Discharge Summary</SelectItem>
-                <SelectItem value="Medical Certificate">Medical Certificate</SelectItem>
-                <SelectItem value="Referral Letter">Referral Letter</SelectItem>
-                <SelectItem value="Vaccination Record">Vaccination Record</SelectItem>
-                <SelectItem value="Other Document">Other Document</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <DialogFooter className="sm:justify-end">
-            <Button 
-              type="button" 
-              variant="secondary" 
-              onClick={() => setShowTypeDialog(false)}
-            >
-              Cancel
-            </Button>
-          </DialogFooter>
         </DialogContent>
       </Dialog>
     </Layout>

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -72,6 +71,17 @@ const HealthForm = () => {
     <Layout>
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold text-forest mb-6">Health Information</h1>
+        
+        {/* Step Indicator */}
+        <div className="flex justify-between items-center mb-6 w-full max-w-md mx-auto">
+          {[1, 2, 3].map((s) => (
+            <div key={s} className={`flex-1 text-center ${
+              s === step ? 'text-forest font-bold' : 'text-muted-foreground'
+            }`}>
+              Step {s}
+            </div>
+          ))}
+        </div>
         
         <Card className="mb-6">
           <CardHeader>

@@ -103,6 +103,11 @@ const Header = ({ isDarkMode, toggleDarkMode }: HeaderProps) => {
                 <DropdownMenuLabel>Health Assessment Tools</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
+                  <Link to="/disease-metrics" className="w-full cursor-pointer">
+                    Disease Metrics Input
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
                   <Link to="/disease-predictor" className="w-full cursor-pointer">
                     Disease Predictor
                   </Link>
@@ -112,38 +117,27 @@ const Header = ({ isDarkMode, toggleDarkMode }: HeaderProps) => {
                     Health Risk Analysis
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/risk-planner" className="w-full cursor-pointer">
-                    Risk Management Planner
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/disease-metrics" className="w-full cursor-pointer">
-                    Disease Metrics Input
-                  </Link>
-                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
             
-            {/* Fitness & Diet Hub Dropdown */}
+            {/* Fitness Hub Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className={`flex items-center space-x-1 ${
-                  isActive('/fitness-trainer') || isActive('/trainer') || isActive('/diet') || isActive('/gym-training') || 
-                  isActive('/learn-exercise-ai') || isActive('/meal-planner')
+                  isActive('/training-dashboard') || isActive('/learn-exercise-ai')
                   ? 'bg-primary/10 text-primary'
                   : ''
                 }`}>
                   <Dumbbell className="mr-1 h-4 w-4" />
-                  <span>Fitness & Diet</span>
+                  <span>Fitness</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="center" className="w-56 bg-card/95 backdrop-blur-sm border-border">
-                <DropdownMenuLabel>Fitness & Nutrition</DropdownMenuLabel>
+                <DropdownMenuLabel>Fitness Tools</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                  <Link to="/fitness-trainer" className="w-full cursor-pointer">
-                    AI Fitness Trainer
+                  <Link to="/training-dashboard" className="w-full cursor-pointer">
+                    Training Dashboard
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
@@ -152,11 +146,24 @@ const Header = ({ isDarkMode, toggleDarkMode }: HeaderProps) => {
                     Learn Exercise with AI
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/trainer" className="w-full cursor-pointer">
-                    Personalized Workout Plans
-                  </Link>
-                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            
+            {/* Diet Hub Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className={`flex items-center space-x-1 ${
+                  isActive('/diet') || isActive('/meal-planner')
+                  ? 'bg-primary/10 text-primary'
+                  : ''
+                }`}>
+                  <Utensils className="mr-1 h-4 w-4" />
+                  <span>Diet</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="center" className="w-56 bg-card/95 backdrop-blur-sm border-border">
+                <DropdownMenuLabel>Nutrition & Diet</DropdownMenuLabel>
+                <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
                   <Link to="/diet" className="w-full cursor-pointer">
                     Diet & Nutrition Planner
@@ -164,13 +171,7 @@ const Header = ({ isDarkMode, toggleDarkMode }: HeaderProps) => {
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link to="/meal-planner" className="w-full cursor-pointer">
-                    <Utensils className="mr-2 h-4 w-4" />
                     Meal Planner
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/gym-training" className="w-full cursor-pointer">
-                    Gym Training Guide
                   </Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -456,12 +457,12 @@ const Header = ({ isDarkMode, toggleDarkMode }: HeaderProps) => {
             </div>
             
             <div className="py-2 space-y-1">
-              <p className="text-xs font-medium text-muted-foreground px-3 py-1">Fitness & Diet</p>
+              <p className="text-xs font-medium text-muted-foreground px-3 py-1">Fitness</p>
               <Link
-                to="/fitness-trainer"
+                to="/training-dashboard"
                 className="block px-3 py-2 rounded-md hover:bg-primary/10 text-foreground hover:text-primary"
               >
-                AI Fitness Trainer
+                Training Dashboard
               </Link>
               <Link
                 to="/learn-exercise-ai"
@@ -469,12 +470,10 @@ const Header = ({ isDarkMode, toggleDarkMode }: HeaderProps) => {
               >
                 Learn Exercise with AI
               </Link>
-              <Link
-                to="/trainer"
-                className="block px-3 py-2 rounded-md hover:bg-primary/10 text-foreground hover:text-primary"
-              >
-                Personalized Workout Plans
-              </Link>
+            </div>
+            
+            <div className="py-2 space-y-1">
+              <p className="text-xs font-medium text-muted-foreground px-3 py-1">Diet</p>
               <Link
                 to="/diet"
                 className="block px-3 py-2 rounded-md hover:bg-primary/10 text-foreground hover:text-primary"
@@ -486,28 +485,6 @@ const Header = ({ isDarkMode, toggleDarkMode }: HeaderProps) => {
                 className="block px-3 py-2 rounded-md hover:bg-primary/10 text-foreground hover:text-primary"
               >
                 Meal Planner
-              </Link>
-              <Link
-                to="/gym-training"
-                className="block px-3 py-2 rounded-md hover:bg-primary/10 text-foreground hover:text-primary"
-              >
-                Gym Training Guide
-              </Link>
-            </div>
-            
-            <div className="py-2 space-y-1">
-              <p className="text-xs font-medium text-muted-foreground px-3 py-1">Records & Documents</p>
-              <Link
-                to="/health-records"
-                className="block px-3 py-2 rounded-md hover:bg-primary/10 text-foreground hover:text-primary"
-              >
-                Health Records
-              </Link>
-              <Link
-                to="/ocr"
-                className="block px-3 py-2 rounded-md hover:bg-primary/10 text-foreground hover:text-primary"
-              >
-                Prescription Scanner
               </Link>
             </div>
             
