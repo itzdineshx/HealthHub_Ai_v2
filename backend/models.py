@@ -188,3 +188,50 @@ class DiseaseRisk(Base):
     
     # Relationships
     user = relationship("User", back_populates="disease_risks")
+
+class RiskReport(Base):
+    __tablename__ = "risk_reports"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    patient_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    date = Column(DateTime, default=datetime.utcnow, nullable=False)
+    risk_level = Column(String, nullable=False)
+    details = Column(Text, nullable=False)
+
+class PatientHistory(Base):
+    __tablename__ = "patient_histories"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    patient_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    doctor_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    advice = Column(Text, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+
+    @property
+    def last_visit(self):
+        return self.created_at
+
+    @property
+    def advice_history(self):
+        from database import SessionLocal
+        db = SessionLocal()
+        try:
+            return db.query(PatientHistory).filter(PatientHistory.patient_id == self.patient_id).all()
+        finally:
+            db.close()
+
+    @property
+    def risk_reports(self):
+        from database import SessionLocal
+        db = SessionLocal()
+        try:
+            return db.query(RiskReport).filter(RiskReport.patient_id == self.patient_id).all()
+        finally:
+            db.close()
+
+class Session(Base):
+    __tablename__ = "sessions"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)

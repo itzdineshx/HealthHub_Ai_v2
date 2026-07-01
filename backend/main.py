@@ -7,7 +7,7 @@ from app.db.mongodb import client
 from app.api.v1.api import api_router
 
 # Import existing routers so we don't break backward compatibility during migration
-# from routers import auth, users, doctor, admin, appointments, health_records, fitness, diet, risk_assessment, disease_predictor, ai_chat
+from routers import auth as legacy_auth, users, doctor, admin, appointments, health_records, fitness, diet, risk_assessment, disease_predictor, ai_chat
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -39,9 +39,18 @@ async def shutdown_db_client():
 # Mount new V1 API
 app.include_router(api_router, prefix=settings.API_V1_STR)
 
-# Mount legacy routers here as needed to keep existing frontend working
-# app.include_router(auth.router)
-# app.include_router(users.router)
+# Mount SQLAlchemy database routers
+app.include_router(legacy_auth.router)
+app.include_router(users.router)
+app.include_router(doctor.router)
+app.include_router(admin.router)
+app.include_router(appointments.router)
+app.include_router(health_records.router)
+app.include_router(fitness.router)
+app.include_router(diet.router)
+app.include_router(risk_assessment.router)
+app.include_router(disease_predictor.router)
+app.include_router(ai_chat.router)
 
 @app.get("/")
 async def root():

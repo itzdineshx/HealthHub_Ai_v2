@@ -4,7 +4,7 @@ Pydantic schemas for request/response models
 from pydantic import BaseModel, EmailStr, Field
 from typing import Optional, List, Dict, Any
 from datetime import datetime, date
-from models import UserRole, DocumentType
+from models import UserRole, DocumentType, MealTime
 
 # Auth schemas
 class Token(BaseModel):
@@ -117,6 +117,22 @@ class DietPlanCreate(DietPlanBase):
 class DietPlanResponse(DietPlanBase):
     id: int
     user_id: int
+    meals: List['MealResponse'] = []
+    
+    class Config:
+        orm_mode = True
+
+class MealBase(BaseModel):
+    name: str
+    calories: int
+    time_of_day: MealTime
+
+class MealCreate(MealBase):
+    pass
+
+class MealResponse(MealBase):
+    id: int
+    diet_plan_id: int
     
     class Config:
         orm_mode = True
@@ -194,3 +210,8 @@ class SystemStatsResponse(BaseModel):
 
 class UserStatusUpdate(BaseModel):
     status: str
+
+class UserUpdate(BaseModel):
+    name: Optional[str] = None
+    role: Optional[str] = None
+    profile_completed: Optional[bool] = None

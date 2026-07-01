@@ -5,89 +5,105 @@
 
 @layer base {
   :root {
-    /* Light mode */
-    --background: 60 33% 98%;
-    --foreground: 150 9% 15%;
+    /* Premium Light Mode - Medical Blue & Pale Gray */
+    --background: 210 20% 98%;
+    --foreground: 222 47% 11%;
 
-    --muted: 60 10% 90%;
-    --muted-foreground: 150 5% 40%;
+    --muted: 210 20% 90%;
+    --muted-foreground: 215 16% 47%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 150 9% 15%;
+    --popover-foreground: 222 47% 11%;
 
-    --border: 60 6% 85%;
-    --input: 60 6% 80%;
+    --border: 210 20% 88%;
+    --input: 210 20% 85%;
 
     --card: 0 0% 100%;
-    --card-foreground: 150 9% 15%;
+    --card-foreground: 222 47% 11%;
 
-    --primary: 141 11% 33%;
-    --primary-foreground: 60 33% 98%;
+    --primary: 217 91% 40%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 60 23% 63%;
-    --secondary-foreground: 150 9% 15%;
+    --secondary: 215 15% 90%;
+    --secondary-foreground: 222 47% 11%;
 
-    --accent: 60 23% 95%;
-    --accent-foreground: 150 9% 15%;
+    --accent: 217 90% 95%;
+    --accent-foreground: 217 91% 40%;
 
     --destructive: 0 84% 60%;
-    --destructive-foreground: 150 9% 98%;
+    --destructive-foreground: 210 20% 98%;
 
-    --ring: 150 9% 30%;
+    --ring: 217 91% 40%;
 
-    --radius: 0.75rem;
+    --radius: 1rem;
+
+    /* Semantic brand colors HSL */
+    --medical-blue: 217 91% 40%;
+    --emerald: 142 70% 45%;
+    --purple-ai: 270 75% 60%;
+    --amber-warn: 35 90% 55%;
+    --red-critical: 0 85% 60%;
+    --cyan-info: 188 86% 53%;
 
     /* Sidebar */
     --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 222.2 84% 4.9%;
-    --sidebar-primary: 141 11% 33%;
-    --sidebar-primary-foreground: 60 33% 98%;
-    --sidebar-accent: 60 23% 95%;
-    --sidebar-accent-foreground: 150 9% 15%;
-    --sidebar-border: 60 6% 85%;
-    --sidebar-ring: 150 9% 30%;
+    --sidebar-foreground: 222 47% 11%;
+    --sidebar-primary: 217 91% 40%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 20% 95%;
+    --sidebar-accent-foreground: 217 91% 40%;
+    --sidebar-border: 210 20% 88%;
+    --sidebar-ring: 217 91% 40%;
   }
 
   .dark {
-    /* Dark mode */
-    --background: 150 9% 10%;
-    --foreground: 60 33% 95%;
+    /* Premium Dark Mode - Deep Navy & Slate */
+    --background: 222 47% 6%;
+    --foreground: 210 20% 98%;
 
-    --muted: 150 5% 20%;
-    --muted-foreground: 150 5% 60%;
+    --muted: 217 32% 17%;
+    --muted-foreground: 215 20% 65%;
 
-    --accent: 150 5% 25%;
-    --accent-foreground: 60 33% 95%;
+    --accent: 217 32% 20%;
+    --accent-foreground: 210 20% 98%;
 
-    --popover: 150 10% 12%;
-    --popover-foreground: 60 33% 95%;
+    --popover: 222 47% 10%;
+    --popover-foreground: 210 20% 98%;
 
-    --border: 150 5% 20%;
-    --input: 150 5% 25%;
+    --border: 217 32% 18%;
+    --input: 217 32% 22%;
 
-    --card: 150 10% 15%;
-    --card-foreground: 60 33% 95%;
+    --card: 222 47% 10%;
+    --card-foreground: 210 20% 98%;
 
-    --primary: 60 23% 63%;
-    --primary-foreground: 150 9% 10%;
+    --primary: 215 90% 55%;
+    --primary-foreground: 222 47% 6%;
 
-    --secondary: 141 11% 33%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 217 32% 17%;
+    --secondary-foreground: 210 20% 98%;
 
-    --destructive: 0 70% 60%;
-    --destructive-foreground: 150 10% 95%;
+    --destructive: 0 70% 55%;
+    --destructive-foreground: 210 20% 98%;
 
-    --ring: 60 23% 63%;
+    --ring: 215 90% 55%;
+
+    /* Semantic brand colors HSL */
+    --medical-blue: 215 90% 55%;
+    --emerald: 142 70% 50%;
+    --purple-ai: 270 75% 65%;
+    --amber-warn: 35 90% 60%;
+    --red-critical: 0 85% 60%;
+    --cyan-info: 188 86% 58%;
 
     /* Sidebar */
-    --sidebar-background: 150 10% 12%;
-    --sidebar-foreground: 60 33% 95%;
-    --sidebar-primary: 60 23% 63%;
-    --sidebar-primary-foreground: 150 9% 10%;
-    --sidebar-accent: 150 5% 25%;
-    --sidebar-accent-foreground: 60 33% 95%;
-    --sidebar-border: 150 5% 20%;
-    --sidebar-ring: 60 23% 63%;
+    --sidebar-background: 222 47% 8%;
+    --sidebar-foreground: 210 20% 98%;
+    --sidebar-primary: 215 90% 55%;
+    --sidebar-primary-foreground: 222 47% 6%;
+    --sidebar-accent: 217 32% 17%;
+    --sidebar-accent-foreground: 210 20% 98%;
+    --sidebar-border: 217 32% 18%;
+    --sidebar-ring: 215 90% 55%;
   }
 }
 
@@ -220,15 +236,15 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .prose h2 {
-  @apply text-2xl font-bold mt-8 mb-4 text-forest dark:text-cream;
+  @apply text-2xl font-bold mt-8 mb-4 text-medical-blue;
 }
 
 .prose h3 {
-  @apply text-xl font-semibold mt-6 mb-3 text-forest dark:text-cream;
+  @apply text-xl font-semibold mt-6 mb-3 text-medical-blue;
 }
 
 .prose a {
-  @apply text-forest dark:text-cream font-medium hover:underline;
+  @apply text-medical-blue font-medium hover:underline;
 }
 
 .prose ul, .prose ol {
@@ -240,7 +256,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .prose blockquote {
-  @apply border-l-4 border-sage pl-4 italic;
+  @apply border-l-4 border-medical-blue pl-4 italic;
 }
 
 /* Form control label visibility improvement */
@@ -249,5 +265,39 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 label {
-  @apply text-forest dark:text-cream font-medium;
+  @apply text-foreground font-medium;
+}
+
+@layer utilities {
+  .bg-medical-blue { background-color: hsl(var(--medical-blue)) !important; }
+  .text-medical-blue { color: hsl(var(--medical-blue)) !important; }
+  .border-medical-blue { border-color: hsl(var(--medical-blue)) !important; }
+  
+  .bg-emerald-green { background-color: hsl(var(--emerald)) !important; }
+  .text-emerald-green { color: hsl(var(--emerald)) !important; }
+  .border-emerald-green { border-color: hsl(var(--emerald)) !important; }
+  
+  .bg-ai-purple { background-color: hsl(var(--purple-ai)) !important; }
+  .text-ai-purple { color: hsl(var(--purple-ai)) !important; }
+  .border-ai-purple { border-color: hsl(var(--purple-ai)) !important; }
+  
+  .bg-warning-amber { background-color: hsl(var(--amber-warn)) !important; }
+  .text-warning-amber { color: hsl(var(--amber-warn)) !important; }
+  .border-warning-amber { border-color: hsl(var(--amber-warn)) !important; }
+  
+  .bg-critical-red { background-color: hsl(var(--red-critical)) !important; }
+  .text-critical-red { color: hsl(var(--red-critical)) !important; }
+  .border-critical-red { border-color: hsl(var(--red-critical)) !important; }
+  
+  .bg-info-cyan { background-color: hsl(var(--cyan-info)) !important; }
+  .text-info-cyan { color: hsl(var(--cyan-info)) !important; }
+  .border-info-cyan { border-color: hsl(var(--cyan-info)) !important; }
+
+  /* Animated glow states for AI */
+  .ai-glow {
+    box-shadow: 0 0 15px 2px rgba(139, 92, 246, 0.15);
+  }
+  .dark .ai-glow {
+    box-shadow: 0 0 20px 4px rgba(139, 92, 246, 0.25);
+  }
 }

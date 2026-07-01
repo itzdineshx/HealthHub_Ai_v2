@@ -1,627 +1,342 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import Layout from "@/components/layout/Layout";
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useAuth } from "@/contexts/AuthContext";
-import { useQuery } from "@tanstack/react-query";
-import { 
-  Users, 
-  Calendar, 
-  Clock, 
-  Search, 
-  FileText, 
-  ClipboardList,
-  Activity,
-  MessageSquare,
-  Bell,
-  Plus,
-  MoreHorizontal,
-  Check,
-  X,
-  BarChart,
-  Filter,
-  Stethoscope,
-  Heart
-} from "lucide-react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { useToast } from "@/components/ui/use-toast";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { format } from "date-fns";
+import { 
+  Users, 
+  Search, 
+  Video,
+  AlertTriangle,
+  Brain,
+  SlidersHorizontal,
+  ChevronRight,
+  Stethoscope,
+  Pill,
+  Plus
+} from "lucide-react";
+import { 
+  AreaChart, Area, 
+  XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
+} from 'recharts';
+import { motion } from "framer-motion";
 
-// Mock data
-const mockPatients = [
-  { id: 1, name: "John Smith", age: 45, gender: "Male", condition: "Hypertension", lastVisit: "2023-04-10", nextAppointment: "2023-05-15", status: "stable" },
-  { id: 2, name: "Emma Johnson", age: 32, gender: "Female", condition: "Diabetes", lastVisit: "2023-04-18", nextAppointment: "2023-05-20", status: "improving" },
-  { id: 3, name: "Michael Brown", age: 58, gender: "Male", condition: "Arthritis", lastVisit: "2023-04-05", nextAppointment: "2023-05-10", status: "stable" },
-  { id: 4, name: "Sophia Davis", age: 28, gender: "Female", condition: "Asthma", lastVisit: "2023-04-22", nextAppointment: "2023-05-22", status: "worsening" },
-  { id: 5, name: "Robert Wilson", age: 63, gender: "Male", condition: "Coronary Artery Disease", lastVisit: "2023-04-15", nextAppointment: "2023-05-05", status: "stable" },
-];
-
-const mockAppointments = [
-  { id: 1, patientName: "John Smith", date: "2023-05-15", time: "09:00 AM", reason: "Follow-up", status: "confirmed" },
-  { id: 2, patientName: "Emma Johnson", date: "2023-05-20", time: "10:30 AM", reason: "Check-up", status: "confirmed" },
-  { id: 3, patientName: "Robert Wilson", date: "2023-05-05", time: "02:15 PM", reason: "Consultation", status: "pending" },
-  { id: 4, patientName: "Sophia Davis", date: "2023-05-22", time: "11:45 AM", reason: "Follow-up", status: "confirmed" },
-  { id: 5, patientName: "New Patient", date: "2023-05-18", time: "03:30 PM", reason: "Initial Consultation", status: "pending" },
-];
-
-const mockStats = {
-  totalPatients: 127,
-  appointmentsToday: 8,
-  pendingReports: 3,
-  averageRating: 4.8
-};
-
-const DoctorPanel = () => {
+export default function DoctorPanel() {
   const { user } = useAuth();
-  const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("dashboard");
-  const [searchTerm, setSearchTerm] = useState("");
-  const [patientFilter, setPatientFilter] = useState("all");
-  const [appointmentFilter, setAppointmentFilter] = useState("all");
+  const { toast } = useToast();
+  const [searchQuery, setSearchQuery] = useState("");
   
-  // Check if user is doctor, otherwise redirect
-  React.useEffect(() => {
-    if (user?.role !== "doctor") {
-      navigate("/dashboard");
-    }
-  }, [user, navigate]);
-
-  const formatDate = (dateString) => {
-    try {
-      return format(new Date(dateString), "MMM d, yyyy");
-    } catch (error) {
-      return dateString;
-    }
+  // Doctor stats
+  const stats = {
+    totalPatients: 142,
+    appointmentsToday: 7,
+    criticalFlags: 2,
+    completionRate: "94%"
   };
 
-  const filteredPatients = mockPatients.filter(patient => {
-    const matchesSearch = patient.name.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    if (patientFilter === "all") return matchesSearch;
-    return matchesSearch && patient.status === patientFilter;
-  });
+  // Patients Queue list
+  const [patients, setPatients] = useState([
+    { id: "pat-1", name: "Dinesh Sharma", age: 34, gender: "Male", condition: "LDL Borderline High", risk: "medium", time: "09:30 AM", status: "waiting" },
+    { id: "pat-2", name: "Amelia Watson", age: 29, gender: "Female", condition: "Migraine Monitoring", risk: "low", time: "10:15 AM", status: "waiting" },
+    { id: "pat-3", name: "Bruce Wayne", age: 41, gender: "Male", condition: "Acute Joint Trauma", risk: "high", time: "11:00 AM", status: "scheduled" },
+    { id: "pat-4", name: "Clara Oswald", age: 26, gender: "Female", condition: "Annual Checkup", risk: "low", time: "02:00 PM", status: "completed" }
+  ]);
 
-  const filteredAppointments = mockAppointments.filter(appointment => {
-    const matchesSearch = appointment.patientName.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    if (appointmentFilter === "all") return matchesSearch;
-    return matchesSearch && appointment.status === appointmentFilter;
-  });
+  const [selectedPatientId, setSelectedPatientId] = useState<string>("pat-1");
+  const activePatient = patients.find(p => p.id === selectedPatientId) || patients[0];
+
+  // Prescription builder state
+  const [selectedDrug, setSelectedDrug] = useState("");
+  const [dosage, setDosage] = useState("");
+  const [instructions, setInstructions] = useState("");
+  const [prescriptionsList, setPrescriptionsList] = useState<any[]>([
+    { drug: "Lisinopril 10mg", dosage: "1 tab daily", instructions: "Lower blood pressure" }
+  ]);
+
+  const [interactionWarning, setInteractionWarning] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (selectedDrug.toLowerCase().includes("aspirin") && activePatient.name === "Dinesh Sharma") {
+      setInteractionWarning("Moderate Interaction Alert: Aspirin may enhance Warfarin/anticoagulant effects. Track INR parameters.");
+    } else {
+      setInteractionWarning(null);
+    }
+  }, [selectedDrug, activePatient]);
+
+  const addPrescription = () => {
+    if (!selectedDrug || !dosage) {
+      toast({
+        title: "Prescription Incomplete",
+        description: "Please specify drug name and dosage details.",
+        variant: "destructive"
+      });
+      return;
+    }
+    setPrescriptionsList(prev => [...prev, { drug: selectedDrug, dosage, instructions }]);
+    setSelectedDrug("");
+    setDosage("");
+    setInstructions("");
+    toast({
+      title: "Rx Pill Added",
+      description: "Medication successfully added to draft prescription slip."
+    });
+  };
+
+  const savePrescription = () => {
+    toast({
+      title: "Rx Dispatched",
+      description: `Digital prescription sent successfully to ${activePatient.name}'s dashboard.`,
+      className: "bg-emerald-green text-white border-none"
+    });
+    setPrescriptionsList([]);
+  };
 
   return (
-    <Layout>
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h1 className="text-3xl font-bold text-forest">Doctor Dashboard</h1>
-            <p className="text-muted-foreground">Manage your patients, appointments, and medical records</p>
-          </div>
-          <div className="flex items-center space-x-4">
-            <Button variant="outline" size="sm" className="relative">
-              <Bell className="h-4 w-4" />
-              <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 text-xs text-white flex items-center justify-center">{mockStats.pendingReports}</span>
-            </Button>
-            <Avatar>
-              <AvatarFallback className="bg-forest text-white">{user?.name?.[0] || 'D'}</AvatarFallback>
-            </Avatar>
-          </div>
+    <motion.div
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -15 }}
+      transition={{ duration: 0.3 }}
+      className="space-y-6"
+    >
+      {/* DOCTOR HEADER SUMMARY */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-card p-6 rounded-3xl border border-border/40 shadow-sm">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">Clinical Workstation</h1>
+          <p className="text-xs md:text-sm text-muted-foreground mt-1">Welcome, Dr. {user?.name || "Robert Johnson"} • Cardiology Division</p>
+        </div>
+        
+        <div className="flex space-x-2">
+          <Badge className="bg-critical-red/10 text-critical-red border-none font-semibold px-3 py-1.5 text-xs rounded-xl">
+            {stats.criticalFlags} CRITICAL FLAGS
+          </Badge>
+          <Badge className="bg-medical-blue/10 text-medical-blue border-none font-semibold px-3 py-1.5 text-xs rounded-xl">
+            {stats.appointmentsToday} PATIENTS TODAY
+          </Badge>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        {/* Left Col: Patient List / Queue */}
+        <div className="lg:col-span-1 space-y-6">
+          <Card className="bg-card border-border/40 rounded-3xl overflow-hidden">
+            <CardHeader className="pb-3 border-b border-border/40 bg-muted/20">
+              <CardTitle className="text-md font-bold flex items-center justify-between">
+                <span>Today's Queue</span>
+                <span className="text-xs bg-medical-blue text-white px-2 py-0.5 rounded-full">{patients.length}</span>
+              </CardTitle>
+              <div className="flex items-center space-x-2 pt-2">
+                <div className="relative flex-1">
+                  <Search className="absolute left-2.5 top-2 h-4 w-4 text-muted-foreground" />
+                  <Input 
+                    placeholder="Filter queue..." 
+                    className="h-8 pl-9 text-xs bg-card rounded-xl border-border/50"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                </div>
+                <Button variant="outline" size="icon" className="h-8 w-8 rounded-xl shrink-0"><SlidersHorizontal className="h-4 w-4" /></Button>
+              </div>
+            </CardHeader>
+            <CardContent className="p-0">
+              <div className="divide-y divide-border/40">
+                {patients.map((p) => {
+                  const isSelected = selectedPatientId === p.id;
+                  return (
+                    <div 
+                      key={p.id}
+                      onClick={() => setSelectedPatientId(p.id)}
+                      className={`p-4 transition-all cursor-pointer flex flex-col gap-2 ${
+                        isSelected 
+                          ? "bg-medical-blue/5 border-l-4 border-l-medical-blue" 
+                          : "hover:bg-muted/30 border-l-4 border-l-transparent"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <Avatar className="h-9 w-9 rounded-xl">
+                            <AvatarFallback className={`${isSelected ? 'bg-medical-blue text-white' : 'bg-muted text-muted-foreground'} font-bold text-xs`}>
+                              {p.name.split(' ')[0][0]}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <span className="font-bold text-sm text-foreground">{p.name}</span>
+                            <div className="flex items-center space-x-1.5 mt-0.5">
+                              <span className="text-[10px] text-muted-foreground">Age {p.age} • {p.time}</span>
+                            </div>
+                          </div>
+                        </div>
+                        <ChevronRight className={`h-4 w-4 transition-transform ${isSelected ? 'text-medical-blue translate-x-1' : 'text-muted-foreground'}`} />
+                      </div>
+                      
+                      <div className="flex items-center justify-between mt-1 pl-12">
+                        <span className="text-[10px] text-muted-foreground truncate flex-1 pr-2">{p.condition}</span>
+                        <Badge className={`text-[8px] font-bold tracking-wider border-none px-1.5 py-0 rounded-md uppercase shrink-0 ${
+                          p.risk === "high" ? "bg-critical-red/10 text-critical-red" :
+                          p.risk === "medium" ? "bg-warning-amber/10 text-warning-amber" :
+                          "bg-emerald-green/10 text-emerald-green"
+                        }`}>
+                          {p.risk} RISK
+                        </Badge>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-          <TabsList className="grid w-full grid-cols-4 lg:w-auto">
-            <TabsTrigger value="dashboard" className="flex items-center gap-2">
-              <BarChart className="h-4 w-4" />
-              <span className="hidden md:inline">Dashboard</span>
-            </TabsTrigger>
-            <TabsTrigger value="patients" className="flex items-center gap-2">
-              <Users className="h-4 w-4" />
-              <span className="hidden md:inline">Patients</span>
-            </TabsTrigger>
-            <TabsTrigger value="appointments" className="flex items-center gap-2">
-              <Calendar className="h-4 w-4" />
-              <span className="hidden md:inline">Appointments</span>
-            </TabsTrigger>
-            <TabsTrigger value="records" className="flex items-center gap-2">
-              <FileText className="h-4 w-4" />
-              <span className="hidden md:inline">Records</span>
-            </TabsTrigger>
-          </TabsList>
-
-          {/* Dashboard Tab */}
-          <TabsContent value="dashboard" className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <Card>
-                <CardHeader className="py-4">
-                  <CardTitle className="text-forest">Total Patients</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex justify-between items-center">
-                    <div className="text-3xl font-bold">{mockStats.totalPatients}</div>
-                    <Users className="h-8 w-8 text-forest opacity-80" />
-                  </div>
-                  <div className="text-sm text-muted-foreground mt-2">
-                    +12 new patients this month
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="py-4">
-                  <CardTitle className="text-forest">Today's Appointments</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex justify-between items-center">
-                    <div className="text-3xl font-bold">{mockStats.appointmentsToday}</div>
-                    <Clock className="h-8 w-8 text-blue-500 opacity-80" />
-                  </div>
-                  <div className="text-sm text-muted-foreground mt-2">
-                    Next: 10:30 AM - Emma Johnson
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="py-4">
-                  <CardTitle className="text-forest">Pending Reports</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex justify-between items-center">
-                    <div className="text-3xl font-bold">{mockStats.pendingReports}</div>
-                    <ClipboardList className="h-8 w-8 text-amber-500 opacity-80" />
-                  </div>
-                  <div className="text-sm text-muted-foreground mt-2">
-                    Due within 48 hours
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="py-4">
-                  <CardTitle className="text-forest">Patient Satisfaction</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex justify-between items-center">
-                    <div className="text-3xl font-bold">{mockStats.averageRating}/5</div>
-                    <Heart className="h-8 w-8 text-red-500 opacity-80" />
-                  </div>
-                  <div className="text-sm text-muted-foreground mt-2">
-                    Based on 45 patient reviews
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-              <Card className="lg:col-span-2">
-                <CardHeader>
-                  <CardTitle>Upcoming Appointments</CardTitle>
-                  <CardDescription>Your schedule for the next few days</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Patient</TableHead>
-                        <TableHead>Date</TableHead>
-                        <TableHead>Time</TableHead>
-                        <TableHead>Reason</TableHead>
-                        <TableHead>Status</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {mockAppointments.slice(0, 3).map((appointment) => (
-                        <TableRow key={appointment.id}>
-                          <TableCell className="font-medium">{appointment.patientName}</TableCell>
-                          <TableCell>{formatDate(appointment.date)}</TableCell>
-                          <TableCell>{appointment.time}</TableCell>
-                          <TableCell>{appointment.reason}</TableCell>
-                          <TableCell>
-                            <Badge variant={appointment.status === "confirmed" ? "secondary" : "outline"}>
-                              {appointment.status}
-                            </Badge>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </CardContent>
-                <CardFooter>
-                  <Button variant="ghost" size="sm" className="w-full" onClick={() => setActiveTab("appointments")}>
-                    View all appointments
+        {/* Right Col: Deep Patient Context & Rx Pad */}
+        <div className="lg:col-span-2 space-y-6">
+          <Card className="bg-card border-border/40 rounded-3xl h-full flex flex-col">
+            <CardHeader className="pb-4 border-b border-border/40">
+              <div className="flex justify-between items-start">
+                <div>
+                  <span className="text-[10px] text-medical-blue font-bold tracking-wider uppercase flex items-center mb-1">
+                    <Stethoscope className="h-3 w-3 mr-1" />
+                    ACTIVE CLINICAL RECORD
+                  </span>
+                  <CardTitle className="text-xl font-bold">{activePatient.name}</CardTitle>
+                  <CardDescription className="flex items-center mt-1 text-xs">
+                    {activePatient.gender} • {activePatient.age} yrs • Scheduled for {activePatient.time}
+                  </CardDescription>
+                </div>
+                <div className="flex space-x-2">
+                  <Button size="sm" variant="outline" className="rounded-xl h-8 text-xs border-emerald-green/30 text-emerald-green hover:bg-emerald-green/10">
+                    <Video className="h-3.5 w-3.5 mr-1.5" />
+                    Teleconsult
                   </Button>
-                </CardFooter>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Patient Activity</CardTitle>
-                  <CardDescription>Recent patient interactions</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex items-start">
-                      <div className="mr-3 mt-0.5">
-                        <Activity className="h-5 w-5 text-green-500" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium">Emma Johnson - Vital Update</p>
-                        <p className="text-xs text-muted-foreground">Heart rate improved to normal range</p>
-                        <p className="text-xs text-muted-foreground">30 minutes ago</p>
-                      </div>
-                    </div>
-                    <div className="flex items-start">
-                      <div className="mr-3 mt-0.5">
-                        <MessageSquare className="h-5 w-5 text-blue-500" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium">John Smith - Message</p>
-                        <p className="text-xs text-muted-foreground">Requested prescription refill</p>
-                        <p className="text-xs text-muted-foreground">2 hours ago</p>
-                      </div>
-                    </div>
-                    <div className="flex items-start">
-                      <div className="mr-3 mt-0.5">
-                        <Stethoscope className="h-5 w-5 text-purple-500" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium">Michael Brown - Test Results</p>
-                        <p className="text-xs text-muted-foreground">Blood work results available</p>
-                        <p className="text-xs text-muted-foreground">Yesterday</p>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-
-          {/* Patients Tab */}
-          <TabsContent value="patients" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                  <div>
-                    <CardTitle>Patient Management</CardTitle>
-                    <CardDescription>View and manage your patient information</CardDescription>
-                  </div>
-                  <div className="flex gap-2 flex-col sm:flex-row">
-                    <div className="relative">
-                      <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground/70" />
-                      <Input 
-                        placeholder="Search patients..." 
-                        className="pl-9 w-full sm:w-[250px]"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                      />
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Select defaultValue="all" onValueChange={setPatientFilter}>
-                        <SelectTrigger className="w-[130px]">
-                          <Filter className="h-4 w-4 mr-2" />
-                          <SelectValue placeholder="Filter" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectGroup>
-                            <SelectLabel>Filter by status</SelectLabel>
-                            <SelectItem value="all">All Patients</SelectItem>
-                            <SelectItem value="stable">Stable</SelectItem>
-                            <SelectItem value="improving">Improving</SelectItem>
-                            <SelectItem value="worsening">Worsening</SelectItem>
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                      <Button className="bg-forest hover:bg-forest-dark text-white">
-                        <Plus className="h-4 w-4 mr-2" />
-                        Add Patient
-                      </Button>
-                    </div>
-                  </div>
                 </div>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Name</TableHead>
-                      <TableHead>Age</TableHead>
-                      <TableHead>Condition</TableHead>
-                      <TableHead>Last Visit</TableHead>
-                      <TableHead>Next Appointment</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredPatients.map((patient) => (
-                      <TableRow key={patient.id}>
-                        <TableCell className="font-medium">{patient.name}</TableCell>
-                        <TableCell>{patient.age}</TableCell>
-                        <TableCell>{patient.condition}</TableCell>
-                        <TableCell>{formatDate(patient.lastVisit)}</TableCell>
-                        <TableCell>{formatDate(patient.nextAppointment)}</TableCell>
-                        <TableCell>
-                          <Badge variant={
-                            patient.status === "stable" ? "outline" : 
-                            patient.status === "improving" ? "secondary" : 
-                            "destructive"
-                          }>
-                            {patient.status}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <Button variant="ghost" size="icon">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-                {filteredPatients.length === 0 && (
-                  <div className="text-center py-8 text-muted-foreground">
-                    No patients matching your search criteria
-                  </div>
-                )}
-              </CardContent>
-              <CardFooter className="flex items-center justify-between">
-                <div className="text-sm text-muted-foreground">
-                  Showing {filteredPatients.length} of {mockPatients.length} patients
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-6 pt-6 flex-1">
+              
+              {/* AI Insight banner */}
+              <div className="p-4 bg-gradient-to-r from-ai-purple/10 to-medical-blue/5 border border-ai-purple/20 rounded-2xl flex gap-3 items-start">
+                <div className="h-8 w-8 rounded-xl bg-ai-purple/20 flex items-center justify-center shrink-0">
+                  <Brain className="h-4 w-4 text-ai-purple" />
                 </div>
-                <div className="flex gap-2">
-                  <Button variant="outline" size="sm" disabled>Previous</Button>
-                  <Button variant="outline" size="sm" disabled>Next</Button>
-                </div>
-              </CardFooter>
-            </Card>
-          </TabsContent>
-
-          {/* Appointments Tab */}
-          <TabsContent value="appointments" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                  <div>
-                    <CardTitle>Appointment Schedule</CardTitle>
-                    <CardDescription>Manage your upcoming appointments</CardDescription>
-                  </div>
-                  <div className="flex gap-2 flex-col sm:flex-row">
-                    <div className="relative">
-                      <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground/70" />
-                      <Input 
-                        placeholder="Search appointments..." 
-                        className="pl-9 w-full sm:w-[250px]"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                      />
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Select defaultValue="all" onValueChange={setAppointmentFilter}>
-                        <SelectTrigger className="w-[130px]">
-                          <Filter className="h-4 w-4 mr-2" />
-                          <SelectValue placeholder="Filter" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectGroup>
-                            <SelectLabel>Filter by status</SelectLabel>
-                            <SelectItem value="all">All Appointments</SelectItem>
-                            <SelectItem value="confirmed">Confirmed</SelectItem>
-                            <SelectItem value="pending">Pending</SelectItem>
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                      <Button className="bg-forest hover:bg-forest-dark text-white">
-                        <Plus className="h-4 w-4 mr-2" />
-                        New Appointment
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Patient</TableHead>
-                      <TableHead>Date</TableHead>
-                      <TableHead>Time</TableHead>
-                      <TableHead>Reason</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredAppointments.map((appointment) => (
-                      <TableRow key={appointment.id}>
-                        <TableCell className="font-medium">{appointment.patientName}</TableCell>
-                        <TableCell>{formatDate(appointment.date)}</TableCell>
-                        <TableCell>{appointment.time}</TableCell>
-                        <TableCell>{appointment.reason}</TableCell>
-                        <TableCell>
-                          <Badge variant={appointment.status === "confirmed" ? "secondary" : "outline"}>
-                            {appointment.status}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex justify-end gap-2">
-                            {appointment.status === "pending" && (
-                              <>
-                                <Button variant="outline" size="sm" className="h-8 w-8 p-0">
-                                  <Check className="h-4 w-4 text-green-500" />
-                                </Button>
-                                <Button variant="outline" size="sm" className="h-8 w-8 p-0">
-                                  <X className="h-4 w-4 text-red-500" />
-                                </Button>
-                              </>
-                            )}
-                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-                {filteredAppointments.length === 0 && (
-                  <div className="text-center py-8 text-muted-foreground">
-                    No appointments matching your search criteria
-                  </div>
-                )}
-              </CardContent>
-              <CardFooter className="flex items-center justify-between">
-                <div className="text-sm text-muted-foreground">
-                  Showing {filteredAppointments.length} of {mockAppointments.length} appointments
-                </div>
-                <div className="flex gap-2">
-                  <Button variant="outline" size="sm" disabled>Previous</Button>
-                  <Button variant="outline" size="sm" disabled>Next</Button>
-                </div>
-              </CardFooter>
-            </Card>
-          </TabsContent>
-
-          {/* Medical Records Tab */}
-          <TabsContent value="records" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Patient Records</CardTitle>
-                <CardDescription>Access and manage medical records</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="p-8 text-center">
-                  <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="text-lg font-medium mb-2">Medical Records System</h3>
-                  <p className="text-muted-foreground mb-4">
-                    Access patient medical history, test results, and clinical notes
+                <div>
+                  <h4 className="text-xs font-bold text-ai-purple mb-1">Copilot Diagnostic Insight</h4>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    Patient history indicates recurring {activePatient.condition.toLowerCase()}. Evaluate compliance with current medication. Consider reviewing recent lipid panel uploaded on June 28.
                   </p>
-                  <div className="flex justify-center gap-2">
-                    <Button>
-                      Search Records
-                    </Button>
-                    <Button variant="outline">
-                      Recent Files
-                    </Button>
-                  </div>
                 </div>
-              </CardContent>
-            </Card>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-base">Pending Reports</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-center">
-                      <div>
-                        <p className="font-medium">John Smith</p>
-                        <p className="text-xs text-muted-foreground">Test results review</p>
-                      </div>
-                      <Badge>Due Today</Badge>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <div>
-                        <p className="font-medium">Emma Johnson</p>
-                        <p className="text-xs text-muted-foreground">Treatment plan update</p>
-                      </div>
-                      <Badge variant="outline">Due in 2 days</Badge>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <div>
-                        <p className="font-medium">Sophia Davis</p>
-                        <p className="text-xs text-muted-foreground">Follow-up notes</p>
-                      </div>
-                      <Badge variant="destructive">Overdue</Badge>
-                    </div>
-                  </div>
-                </CardContent>
-                <CardFooter>
-                  <Button variant="ghost" size="sm" className="w-full">
-                    View All Reports
-                  </Button>
-                </CardFooter>
-              </Card>
-              
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-base">Recent Uploads</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex items-center">
-                      <FileText className="h-5 w-5 mr-2 text-blue-500" />
-                      <div>
-                        <p className="font-medium">Blood Work Results</p>
-                        <p className="text-xs text-muted-foreground">Michael Brown • 2 days ago</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center">
-                      <FileText className="h-5 w-5 mr-2 text-green-500" />
-                      <div>
-                        <p className="font-medium">ECG Report</p>
-                        <p className="text-xs text-muted-foreground">John Smith • 3 days ago</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center">
-                      <FileText className="h-5 w-5 mr-2 text-purple-500" />
-                      <div>
-                        <p className="font-medium">Radiology Images</p>
-                        <p className="text-xs text-muted-foreground">Robert Wilson • 5 days ago</p>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-                <CardFooter>
-                  <Button variant="ghost" size="sm" className="w-full">
-                    View All Files
-                  </Button>
-                </CardFooter>
-              </Card>
-              
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-base">Quick Actions</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    <Button variant="outline" className="w-full justify-start">
-                      <Plus className="h-4 w-4 mr-2" />
-                      Create New Record
-                    </Button>
-                    <Button variant="outline" className="w-full justify-start">
-                      <ClipboardList className="h-4 w-4 mr-2" />
-                      Write Prescription
-                    </Button>
-                    <Button variant="outline" className="w-full justify-start">
-                      <Activity className="h-4 w-4 mr-2" />
-                      Record Vitals
-                    </Button>
-                    <Button variant="outline" className="w-full justify-start">
-                      <Calendar className="h-4 w-4 mr-2" />
-                      Schedule Follow-up
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-        </Tabs>
-      </div>
-    </Layout>
-  );
-};
+              </div>
 
-export default DoctorPanel;
+              {/* Vitals Trend Chart */}
+              <div className="space-y-3">
+                <h4 className="text-sm font-bold text-foreground">Recent Vitals Trend</h4>
+                <div className="h-48 p-4 bg-muted/20 rounded-2xl border border-border/50">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={[
+                      { name: "Week 1", value: 68 },
+                      { name: "Week 2", value: 72 },
+                      { name: "Week 3", value: 70 },
+                      { name: "Week 4", value: 74 }
+                    ]}>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(150,150,150,0.1)" />
+                      <XAxis dataKey="name" stroke="rgba(150,150,150,0.5)" fontSize={10} axisLine={false} tickLine={false} />
+                      <YAxis domain={[50, 90]} stroke="rgba(150,150,150,0.5)" fontSize={10} axisLine={false} tickLine={false} />
+                      <Tooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }} />
+                      <Area type="monotone" dataKey="value" stroke="hsl(var(--medical-blue))" strokeWidth={3} fillOpacity={0.1} fill="hsl(var(--medical-blue))" />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+
+              {/* Digital Rx Pad */}
+              <div className="space-y-4 pt-2">
+                <h4 className="text-sm font-bold text-foreground flex items-center">
+                  <Pill className="h-4 w-4 mr-1.5 text-medical-blue" />
+                  Prescription Pad
+                </h4>
+
+                <div className="bg-muted/30 border border-border/50 rounded-2xl p-4 space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 text-xs">
+                    <div className="sm:col-span-5">
+                      <label className="text-[10px] font-semibold text-muted-foreground uppercase mb-1.5 block">Medication</label>
+                      <Input 
+                        value={selectedDrug}
+                        onChange={(e) => setSelectedDrug(e.target.value)}
+                        placeholder="Search formulary..." 
+                        className="bg-card border-border/50 rounded-xl shadow-sm"
+                      />
+                    </div>
+                    <div className="sm:col-span-3">
+                      <label className="text-[10px] font-semibold text-muted-foreground uppercase mb-1.5 block">Dosage</label>
+                      <Input 
+                        value={dosage}
+                        onChange={(e) => setDosage(e.target.value)}
+                        placeholder="e.g. 10mg" 
+                        className="bg-card border-border/50 rounded-xl shadow-sm"
+                      />
+                    </div>
+                    <div className="sm:col-span-4">
+                      <label className="text-[10px] font-semibold text-muted-foreground uppercase mb-1.5 block">Instructions</label>
+                      <div className="flex space-x-2">
+                        <Input 
+                          value={instructions}
+                          onChange={(e) => setInstructions(e.target.value)}
+                          placeholder="e.g. Daily" 
+                          className="bg-card border-border/50 rounded-xl shadow-sm"
+                        />
+                        <Button 
+                          onClick={addPrescription}
+                          size="icon"
+                          className="bg-medical-blue hover:bg-blue-600 rounded-xl shrink-0"
+                        >
+                          <Plus className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+
+                  {interactionWarning && (
+                    <div className="p-3 bg-warning-amber/10 border border-warning-amber/20 rounded-xl text-xs text-amber-600 dark:text-amber-400 flex items-start space-x-2">
+                      <AlertTriangle className="h-4 w-4 flex-shrink-0 mt-0.5" />
+                      <span>{interactionWarning}</span>
+                    </div>
+                  )}
+
+                  {prescriptionsList.length > 0 && (
+                    <div className="mt-4 border border-border/60 rounded-xl overflow-hidden text-xs">
+                      <div className="bg-muted/50 p-2.5 font-semibold text-muted-foreground grid grid-cols-12 gap-2 text-[10px] uppercase tracking-wider border-b border-border/60">
+                        <span className="col-span-5">Drug Name</span>
+                        <span className="col-span-3">Dose</span>
+                        <span className="col-span-4">Sig</span>
+                      </div>
+                      <div className="divide-y divide-border/40 bg-card">
+                        {prescriptionsList.map((item, idx) => (
+                          <div key={idx} className="p-3 grid grid-cols-12 gap-2 items-center">
+                            <span className="font-bold col-span-5">{item.drug}</span>
+                            <span className="col-span-3 text-muted-foreground">{item.dosage}</span>
+                            <span className="col-span-4 text-muted-foreground truncate">{item.instructions}</span>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="p-3 bg-muted/20 border-t border-border/60 flex justify-end">
+                        <Button 
+                          onClick={savePrescription}
+                          className="bg-emerald-green hover:bg-emerald-600 text-xs rounded-xl px-5 shadow-lg shadow-emerald-green/20"
+                        >
+                          Sign & E-Prescribe
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </motion.div>
+  );
+}

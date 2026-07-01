@@ -5,6 +5,7 @@ import Header from './Header';
 import Footer from './Footer';
 import CustomCursor from '@/components/ui/CustomCursor';
 import { Toaster } from '@/components/ui/toaster';
+import { useLocation } from 'react-router-dom';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -36,6 +37,19 @@ const Layout = ({ children }: LayoutProps) => {
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  const location = useLocation();
+  const isPublicPage = ['/', '/login', '/signup', '/about', '/privacy', '/terms', '/contact'].includes(location.pathname);
+
+  // If we are inside the app (not a public page), we just render the children without the legacy Header/Footer
+  // since OSLayout handles the shell now.
+  if (!isPublicPage) {
+    return (
+      <div className="w-full h-full animate-in fade-in duration-500">
+        {children}
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col min-h-screen overflow-hidden">

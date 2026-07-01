@@ -1,12 +1,10 @@
 from fastapi import APIRouter
-# Import actual routers here when they are migrated
-# from app.api.v1.routers import auth, users, patients, doctors
+from app.api.v1.routers import auth, predictions
 
 api_router = APIRouter()
 
-# Example inclusion for when routers are migrated:
-# api_router.include_router(auth.router, prefix="/auth", tags=["auth"])
-# api_router.include_router(users.router, prefix="/users", tags=["users"])
+api_router.include_router(auth.router, prefix="/auth", tags=["auth"])
+api_router.include_router(predictions.router, prefix="/predictions", tags=["predictions"])
 
 # Placeholder test route
 @api_router.get("/health")

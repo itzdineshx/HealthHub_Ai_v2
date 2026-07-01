@@ -4,14 +4,14 @@ from sqlalchemy import func
 from typing import List, Optional
 from datetime import datetime, timedelta
 
-from ..database import get_db
-from ..models import User, Appointment, Session as DBSession
-from ..schemas import (
+from database import get_db
+from models import User, Appointment, Session as DBSession
+from schemas import (
     UserResponse,
     SystemStatsResponse,
     UserStatusUpdate
 )
-from ..auth import get_current_user
+from routers.auth import get_current_user
 
 router = APIRouter(
     prefix="/api/admin",

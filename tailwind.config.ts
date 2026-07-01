@@ -25,27 +25,17 @@ export default {
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
 				
-				// Sage Serenity Brand Colors
-				sage: {
-					DEFAULT: '#B2AC88', // Primary background
-					light: '#c8c4a9',
-					dark: '#8c8768',
-					foreground: '#ffffff',
-				},
-				forest: {
-					DEFAULT: '#4D5D53', // Accent (Buttons/Headings)
-					light: '#657369',
-					dark: '#3a453e',
-					foreground: '#ffffff',
-				},
-				cream: '#FFF3E0', // Complementary
-				lilac: '#F8D2F9', // Complementary
+				// HealthHub AI Semantic Colors
+				'medical-blue': 'hsl(var(--medical-blue))',
+				'emerald-green': 'hsl(var(--emerald))',
+				'ai-purple': 'hsl(var(--purple-ai))',
+				'warning-amber': 'hsl(var(--amber-warn))',
+				'critical-red': 'hsl(var(--red-critical))',
+				'info-cyan': 'hsl(var(--cyan-info))',
 				
 				primary: {
-					DEFAULT: '#4D5D53', // Using forest as primary
-					light: '#657369',
-					dark: '#3a453e',
-					foreground: '#ffffff'
+					DEFAULT: 'hsl(var(--primary))',
+					foreground: 'hsl(var(--primary-foreground))'
 				},
 				secondary: {
 					DEFAULT: 'hsl(var(--secondary))',

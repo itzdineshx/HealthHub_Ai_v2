@@ -3,9 +3,9 @@ from sqlalchemy.orm import Session
 from typing import List
 from datetime import datetime, date
 
-from ..database import get_db
-from ..models import User, Appointment, PatientHistory, RiskReport
-from ..schemas import (
+from database import get_db
+from models import User, Appointment, PatientHistory, RiskReport
+from schemas import (
     AppointmentResponse,
     PatientHistoryResponse,
     RiskReportResponse,

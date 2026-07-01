@@ -58,7 +58,7 @@ export const useAuthProvider = (): AuthContextType => {
         description: "Welcome back to HealthHub AI!",
       });
       // Redirect logic based on role would happen here after fetching from DB
-      navigate("/dashboard");
+      navigate("/patient/home");
       return true;
     } catch (error: any) {
       console.error("Login error:", error);
@@ -101,7 +101,7 @@ export const useAuthProvider = (): AuthContextType => {
           title: "Login Successful",
           description: "Welcome to HealthHub AI!",
         });
-        navigate("/dashboard");
+        navigate("/patient/home");
         return true;
       }
       return false;
