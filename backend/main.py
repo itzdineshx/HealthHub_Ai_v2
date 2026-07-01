@@ -7,7 +7,7 @@ from app.db.mongodb import client
 from app.api.v1.api import api_router
 
 # Import existing routers so we don't break backward compatibility during migration
-from routers import auth as legacy_auth, users, doctor, admin, appointments, health_records, fitness, diet, risk_assessment, disease_predictor, ai_chat
+from routers import auth as legacy_auth, users, doctor, admin, appointments, health_records, fitness, diet, risk_assessment, disease_predictor, ai_chat, dashboard
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -51,7 +51,7 @@ app.include_router(diet.router)
 app.include_router(risk_assessment.router)
 app.include_router(disease_predictor.router)
 app.include_router(ai_chat.router)
-
+app.include_router(dashboard.router)
 @app.get("/")
 async def root():
     return {"message": "Welcome to HealthHub API powered by MongoDB and Firebase"}

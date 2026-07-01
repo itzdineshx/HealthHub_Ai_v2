@@ -4,9 +4,12 @@ import { useAuth } from "@/contexts/AuthContext";
 import { 
   Heart, Activity, Moon, Flame, Brain, CheckCircle2, Circle, Phone,
   Upload, ShieldAlert, MessageSquare, Pill, Settings, ChevronRight,
-  Droplet, Utensils
+  Droplet, Utensils, FileText, Calendar, Apple
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { useQuery } from "@tanstack/react-query";
+import { fetchOSDashboardSummary, fetchOSDashboardInsights } from "@/lib/api";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -23,6 +26,16 @@ const itemVariants = {
 
 export default function Dashboard() {
   const { user } = useAuth();
+  
+  const { data: summary, isLoading: isSummaryLoading } = useQuery({
+    queryKey: ['osDashboardSummary'],
+    queryFn: () => fetchOSDashboardSummary("dummy-token"), // In real app, pass actual token
+  });
+
+  const { data: insights, isLoading: isInsightsLoading } = useQuery({
+    queryKey: ['osDashboardInsights'],
+    queryFn: () => fetchOSDashboardInsights("dummy-token"),
+  });
   
   return (
     <motion.div 
@@ -171,22 +184,23 @@ export default function Dashboard() {
                 AI Daily Brief
               </h3>
               <ul className="space-y-2">
-                <li className="flex items-center text-xs text-slate-300">
-                  <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 mr-2" />
-                  Your sleep quality improved by 12%
-                </li>
-                <li className="flex items-center text-xs text-blue-400 font-medium">
-                  <div className="h-1.5 w-1.5 rounded-full bg-blue-500 mr-2" />
-                  You have a workout scheduled at 6:00 PM
-                </li>
-                <li className="flex items-center text-xs text-orange-400 font-medium">
-                  <div className="h-1.5 w-1.5 rounded-full bg-orange-500 mr-2" />
-                  Drink more water. You're 1.2L behind
-                </li>
-                <li className="flex items-center text-xs text-purple-400 font-medium">
-                  <div className="h-1.5 w-1.5 rounded-full bg-purple-500 mr-2" />
-                  Vitamin D supplement time: 10:00 AM
-                </li>
+                {isInsightsLoading ? (
+                  <div className="space-y-2">
+                    <Skeleton className="h-4 w-3/4 bg-blue-900/40" />
+                    <Skeleton className="h-4 w-5/6 bg-blue-900/40" />
+                    <Skeleton className="h-4 w-2/3 bg-blue-900/40" />
+                  </div>
+                ) : insights?.daily_brief?.map((brief: any, index: number) => (
+                  <li key={index} className={`flex items-center text-xs font-medium ${brief.color === 'emerald' ? 'text-emerald-400' : brief.color === 'blue' ? 'text-blue-400' : brief.color === 'orange' ? 'text-orange-400' : 'text-purple-400'}`}>
+                    <div className={`h-1.5 w-1.5 rounded-full mr-2 ${brief.color === 'emerald' ? 'bg-emerald-500' : brief.color === 'blue' ? 'bg-blue-500' : brief.color === 'orange' ? 'bg-orange-500' : 'bg-purple-500'}`} />
+                    {brief.text}
+                  </li>
+                )) || (
+                  <li className="flex items-center text-xs text-slate-300">
+                    <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 mr-2" />
+                    All systems optimal. Your AI brief is generating...
+                  </li>
+                )}
               </ul>
             </div>
             <div className="hidden sm:flex items-center justify-center pr-8">

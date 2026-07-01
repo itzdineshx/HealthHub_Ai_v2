@@ -144,3 +144,33 @@ export const fetchUpcomingAppointments = async (token: string | null) => {
     }
   ];
 }; 
+
+// OS Dashboard APIs
+export const fetchOSDashboardSummary = async (token: string | null) => {
+  if (import.meta.env.DEV && !token) {
+    // In dev mode without token, we can mock or still try the API
+    try {
+      const response = await fetch(`${API_BASE_URL}/dashboard/summary`);
+      if (response.ok) return response.json();
+    } catch (e) {
+      console.warn("Failed to fetch from backend, returning mock data");
+    }
+  }
+  
+  if (!token) throw new Error("No token");
+  return fetchAuthenticated('/dashboard/summary', token);
+};
+
+export const fetchOSDashboardInsights = async (token: string | null) => {
+  if (import.meta.env.DEV && !token) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/dashboard/ai-insights`);
+      if (response.ok) return response.json();
+    } catch (e) {
+      console.warn("Failed to fetch from backend, returning mock data");
+    }
+  }
+  
+  if (!token) throw new Error("No token");
+  return fetchAuthenticated('/dashboard/ai-insights', token);
+};
