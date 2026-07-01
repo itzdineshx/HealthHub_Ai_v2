@@ -1,7 +1,16 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "./use-toast";
 import { User, UserRole, AuthProvider, GoogleProfile, AuthContextType } from "@/types/auth";
+import { auth } from "@/lib/firebase";
+import { 
+  signInWithEmailAndPassword, 
+  createUserWithEmailAndPassword, 
+  signOut, 
+  onAuthStateChanged,
+  GoogleAuthProvider,
+  signInWithPopup
+} from "firebase/auth";
 
 export const useAuthProvider = (): AuthContextType => {
   const [user, setUser] = useState<User | null>(null);
@@ -9,114 +18,53 @@ export const useAuthProvider = (): AuthContextType => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  // Check for saved session on mount
   useEffect(() => {
-    const savedUser = localStorage.getItem("user");
-    if (savedUser) {
-      try {
-        const parsedUser = JSON.parse(savedUser);
-        setUser(parsedUser);
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      if (firebaseUser) {
+        // Here we map the Firebase User to our internal User structure
+        // In a real app, you'd fetch the role and profile completion status from MongoDB
+        const mappedUser: User = {
+          uid: firebaseUser.uid,
+          email: firebaseUser.email || "",
+          name: firebaseUser.displayName || firebaseUser.email?.split("@")[0] || "User",
+          role: "patient", // Default, would come from DB
+          provider: "email",
+          profileCompleted: false
+        };
+        setUser(mappedUser);
         setIsAuthenticated(true);
-        
-        // Redirect to health form if profile is not completed
-        if (parsedUser && !parsedUser.profileCompleted) {
-          navigate("/health-form");
-        }
-      } catch (error) {
-        console.error("Failed to parse saved user:", error);
-        localStorage.removeItem("user");
+      } else {
+        setUser(null);
+        setIsAuthenticated(false);
       }
-    }
-  }, [navigate]);
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const updateUser = (userData: Partial<User>) => {
     if (!user) return;
-    
     const updatedUser = { ...user, ...userData };
     setUser(updatedUser);
-    localStorage.setItem("user", JSON.stringify(updatedUser));
+    // Ideally this also updates your MongoDB backend
     return updatedUser;
   };
 
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
-      // This is a mock implementation - in a real app, this would call an API
-      // Special credential check for admin and doctor roles
-      if (email === "admin@example.com") {
-        if (password === "admin123") {
-          const adminUser = { 
-            email, 
-            role: "admin" as UserRole, 
-            name: "Admin User", 
-            provider: "email" as AuthProvider,
-            profileCompleted: true,
-            uid: `email-${Math.random().toString(36).substring(2)}`
-          };
-          setUser(adminUser);
-          setIsAuthenticated(true);
-          localStorage.setItem("user", JSON.stringify(adminUser));
-          toast({
-            title: "Login Successful",
-            description: "Welcome to the admin panel!",
-          });
-          navigate("/admin");
-          return true;
-        }
-      } else if (email === "doctor@example.com") {
-        if (password === "doctor123") {
-          const doctorUser = { 
-            email, 
-            role: "doctor" as UserRole, 
-            name: "Doctor User", 
-            provider: "email" as AuthProvider,
-            profileCompleted: true,
-            uid: `email-${Math.random().toString(36).substring(2)}`
-          };
-          setUser(doctorUser);
-          setIsAuthenticated(true);
-          localStorage.setItem("user", JSON.stringify(doctorUser));
-          toast({
-            title: "Login Successful",
-            description: "Welcome to the doctor panel!",
-          });
-          navigate("/doctor");
-          return true;
-        }
-      }
-
-      // Regular user login (mock)
-      if (email && password.length >= 6) {
-        const regularUser = { 
-          email, 
-          role: "patient" as UserRole, 
-          provider: "email" as AuthProvider,
-          profileCompleted: false,  // New users need to complete profile
-          uid: `email-${Math.random().toString(36).substring(2)}`
-        };
-        setUser(regularUser);
-        setIsAuthenticated(true);
-        localStorage.setItem("user", JSON.stringify(regularUser));
-        toast({
-          title: "Login Successful",
-          description: "Welcome to HealthHub.ai!",
-        });
-        
-        // Redirect to health form for profile completion
-        navigate("/health-form");
-        return true;
-      }
-
+      await signInWithEmailAndPassword(auth, email, password);
       toast({
-        title: "Login Failed",
-        description: "Invalid email or password. Please try again.",
-        variant: "destructive",
+        title: "Login Successful",
+        description: "Welcome back to HealthHub AI!",
       });
-      return false;
-    } catch (error) {
+      // Redirect logic based on role would happen here after fetching from DB
+      navigate("/dashboard");
+      return true;
+    } catch (error: any) {
       console.error("Login error:", error);
       toast({
         title: "Login Failed",
-        description: "Something went wrong. Please try again.",
+        description: error.message || "Invalid email or password.",
         variant: "destructive",
       });
       return false;
@@ -125,40 +73,19 @@ export const useAuthProvider = (): AuthContextType => {
 
   const signUp = async (name: string, email: string, password: string): Promise<boolean> => {
     try {
-      // This is a mock implementation - in a real app, this would call an API
-      if (email && password.length >= 6 && name) {
-        const newUser = { 
-          email, 
-          role: "patient" as UserRole, 
-          name, 
-          provider: "email" as AuthProvider,
-          profileCompleted: false,  // New users need to complete profile
-          uid: `email-${Math.random().toString(36).substring(2)}`
-        };
-        setUser(newUser);
-        setIsAuthenticated(true);
-        localStorage.setItem("user", JSON.stringify(newUser));
-        toast({
-          title: "Account Created",
-          description: "Your account has been created successfully!",
-        });
-        
-        // Redirect to health form
-        navigate("/health-form");
-        return true;
-      }
-
+      // In a real app, you would also store the name in your MongoDB backend
+      await createUserWithEmailAndPassword(auth, email, password);
       toast({
-        title: "Sign Up Failed",
-        description: "Please fill in all fields correctly.",
-        variant: "destructive",
+        title: "Account Created",
+        description: "Your account has been created successfully!",
       });
-      return false;
-    } catch (error) {
+      navigate("/health-form");
+      return true;
+    } catch (error: any) {
       console.error("Sign up error:", error);
       toast({
         title: "Sign Up Failed",
-        description: "Something went wrong. Please try again.",
+        description: error.message || "Something went wrong.",
         variant: "destructive",
       });
       return false;
@@ -167,76 +94,37 @@ export const useAuthProvider = (): AuthContextType => {
 
   const loginWithProvider = async (provider: "google" | "microsoft", profile?: GoogleProfile): Promise<boolean> => {
     try {
-      // For Google auth with provided profile data
-      if (provider === "google" && profile) {
-        const { email, name, sub } = profile;
-        
-        const googleUser = { 
-          email, 
-          role: "patient" as UserRole, 
-          name, 
-          provider: "google" as AuthProvider,
-          profileCompleted: false,  // New users need to complete profile
-          uid: sub
-        };
-        
-        setUser(googleUser);
-        setIsAuthenticated(true);
-        localStorage.setItem("user", JSON.stringify(googleUser));
-        
+      if (provider === "google") {
+        const googleProvider = new GoogleAuthProvider();
+        await signInWithPopup(auth, googleProvider);
         toast({
           title: "Login Successful",
-          description: `Welcome to HealthHub.ai, ${name}!`,
+          description: "Welcome to HealthHub AI!",
         });
-        
-        // Redirect to health form
-        navigate("/health-form");
+        navigate("/dashboard");
         return true;
       }
-      
-      // Legacy mock implementation for other providers or when profile is not provided
-      const providerName = provider === "google" ? "Google" : "Microsoft";
-      
-      // Create a mock user based on the provider
-      const mockEmail = `user-${Math.random().toString(36).substring(2)}@${provider}.com`;
-      const mockName = `${providerName} User`;
-      
-      const newUser = { 
-        email: mockEmail, 
-        role: "patient" as UserRole, 
-        name: mockName, 
-        provider: provider as AuthProvider,
-        profileCompleted: false,  // New users need to complete profile
-        uid: `${provider}-${Math.random().toString(36).substring(2)}`
-      };
-      
-      setUser(newUser);
-      setIsAuthenticated(true);
-      localStorage.setItem("user", JSON.stringify(newUser));
-      
-      toast({
-        title: "Login Successful",
-        description: `You've been logged in with ${providerName}!`,
-      });
-      
-      // Redirect to health form
-      navigate("/health-form");
-      return true;
-    } catch (error) {
+      return false;
+    } catch (error: any) {
       console.error(`${provider} login error:`, error);
       toast({
         title: "Authentication Failed",
-        description: `Could not sign in with ${provider}. Please try again.`,
+        description: error.message || `Could not sign in with ${provider}.`,
         variant: "destructive",
       });
       return false;
     }
   };
 
-  const logout = () => {
-    setUser(null);
-    setIsAuthenticated(false);
-    localStorage.removeItem("user");
+  const logout = async () => {
+    try {
+      await signOut(auth);
+      setUser(null);
+      setIsAuthenticated(false);
+      navigate("/login");
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
   };
 
   return {
