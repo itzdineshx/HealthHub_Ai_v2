@@ -37,6 +37,18 @@ export default function Dashboard() {
     queryFn: () => fetchOSDashboardInsights("dummy-token"),
   });
   
+  // Default fallbacks to prevent undefined errors while loading or on failure
+  const healthScore = summary?.health_score || { score: 87, status: "Excellent", message: "You're doing great! Keep maintaining your healthy habits." };
+  const vitals = summary?.vitals || {
+    heart_rate: { value: 72, unit: "bpm", status: "Normal" },
+    sleep: { value: "7h 45m", status: "Good" },
+    steps: { value: 8432, status: "Today" },
+    calories: { value: 1248, status: "Today" }
+  };
+  const overview = summary?.overview || {
+    blood_pressure: "120/80", blood_sugar: 98, bmi: 24.5, weight: 65
+  };
+
   return (
     <motion.div 
       variants={containerVariants}
@@ -67,12 +79,12 @@ export default function Dashboard() {
             <div className="flex items-center justify-between mt-2">
               <div className="flex flex-col">
                 <div className="flex items-baseline">
-                  <span className="text-5xl font-bold text-white">87</span>
+                  {isSummaryLoading ? <Skeleton className="h-12 w-16 bg-slate-800" /> : <span className="text-5xl font-bold text-white">{healthScore.score}</span>}
                   <span className="text-sm text-slate-400 ml-1">/100</span>
                 </div>
                 <div className="flex items-center mt-2 bg-emerald-500/10 px-2 py-1 rounded w-fit">
                   <CheckCircle2 className="h-3 w-3 text-emerald-500 mr-1" />
-                  <span className="text-xs text-emerald-500 font-medium">Excellent</span>
+                  <span className="text-xs text-emerald-500 font-medium">{healthScore.status}</span>
                 </div>
               </div>
               
@@ -100,7 +112,7 @@ export default function Dashboard() {
                   <path
                     className="text-emerald-500"
                     strokeWidth="3.8"
-                    strokeDasharray="62, 100"
+                    strokeDasharray={`${(healthScore.score / 100) * 100}, 100`}
                     strokeDashoffset="-25"
                     strokeLinecap="round"
                     stroke="currentColor"
@@ -112,7 +124,7 @@ export default function Dashboard() {
             </div>
             <div className="mt-6">
               <p className="text-[11px] text-slate-400 leading-relaxed pr-4">
-                You're doing great! Keep maintaining your healthy habits.
+                {healthScore.message}
               </p>
               <button className="mt-4 text-xs font-semibold text-blue-500 flex items-center hover:text-blue-400 transition-colors">
                 View Full Report <ChevronRight className="h-3 w-3 ml-1" />
@@ -129,11 +141,11 @@ export default function Dashboard() {
               <div>
                 <p className="text-xs text-slate-400 font-medium mb-1">Heart Rate</p>
                 <div className="flex items-baseline space-x-1">
-                  <span className="text-2xl font-bold">72</span>
-                  <span className="text-xs text-slate-400">bpm</span>
+                  {isSummaryLoading ? <Skeleton className="h-8 w-12 bg-slate-800" /> : <span className="text-2xl font-bold">{vitals.heart_rate.value}</span>}
+                  <span className="text-xs text-slate-400">{vitals.heart_rate.unit || 'bpm'}</span>
                 </div>
               </div>
-              <span className="text-xs text-emerald-500 mt-2">Normal</span>
+              <span className="text-xs text-emerald-500 mt-2">{vitals.heart_rate.status}</span>
             </div>
 
             {/* Sleep */}
@@ -142,10 +154,10 @@ export default function Dashboard() {
               <div>
                 <p className="text-xs text-slate-400 font-medium mb-1">Sleep</p>
                 <div className="flex items-baseline space-x-1">
-                  <span className="text-2xl font-bold">7h 45m</span>
+                  {isSummaryLoading ? <Skeleton className="h-8 w-16 bg-slate-800" /> : <span className="text-2xl font-bold">{vitals.sleep.value}</span>}
                 </div>
               </div>
-              <span className="text-xs text-indigo-400 mt-2">Good</span>
+              <span className="text-xs text-indigo-400 mt-2">{vitals.sleep.status}</span>
             </div>
 
             {/* Steps */}
@@ -154,10 +166,10 @@ export default function Dashboard() {
               <div>
                 <p className="text-xs text-slate-400 font-medium mb-1">Steps</p>
                 <div className="flex items-baseline space-x-1">
-                  <span className="text-2xl font-bold">8,432</span>
+                  {isSummaryLoading ? <Skeleton className="h-8 w-16 bg-slate-800" /> : <span className="text-2xl font-bold">{vitals.steps.value.toLocaleString()}</span>}
                 </div>
               </div>
-              <span className="text-xs text-slate-400 mt-2">Today</span>
+              <span className="text-xs text-slate-400 mt-2">{vitals.steps.status}</span>
             </div>
 
             {/* Calories */}
@@ -166,10 +178,10 @@ export default function Dashboard() {
               <div>
                 <p className="text-xs text-slate-400 font-medium mb-1">Calories</p>
                 <div className="flex items-baseline space-x-1">
-                  <span className="text-2xl font-bold">1,248</span>
+                  {isSummaryLoading ? <Skeleton className="h-8 w-16 bg-slate-800" /> : <span className="text-2xl font-bold">{vitals.calories.value.toLocaleString()}</span>}
                 </div>
               </div>
-              <span className="text-xs text-slate-400 mt-2">Today</span>
+              <span className="text-xs text-slate-400 mt-2">{vitals.calories.status}</span>
             </div>
 
           </div>
@@ -223,69 +235,34 @@ export default function Dashboard() {
               {/* Vertical line connecting nodes */}
               <div className="absolute left-[17px] top-2 bottom-2 w-px bg-slate-800" />
               
-              {/* Event 1 */}
-              <div className="relative flex items-start">
-                <div className="absolute -left-1 text-[10px] text-slate-400 font-medium mt-0.5">08:00 AM</div>
-                <div className="ml-14 flex items-center justify-center w-5 h-5 rounded-full border-[3px] border-[#151C2C] bg-emerald-500 z-10 mr-3">
-                  <div className="w-1.5 h-1.5 bg-white rounded-full" />
+              {isSummaryLoading ? (
+                <div className="space-y-6">
+                  {[1, 2, 3, 4].map(i => (
+                    <div key={i} className="relative flex items-start">
+                      <div className="ml-14 w-full">
+                        <Skeleton className="h-4 w-24 bg-slate-800 mb-1" />
+                        <Skeleton className="h-3 w-16 bg-slate-800" />
+                      </div>
+                    </div>
+                  ))}
                 </div>
-                <div className="flex-1 -mt-1">
-                  <h4 className="text-xs font-semibold text-white">Vitamin D</h4>
-                  <p className="text-[10px] text-slate-400">1 tablet</p>
+              ) : summary?.timeline ? summary.timeline.map((event: any, index: number) => (
+                <div key={index} className="relative flex items-start">
+                  <div className="absolute -left-1 text-[10px] text-slate-400 font-medium mt-0.5">{event.time}</div>
+                  <div className={`ml-14 flex items-center justify-center w-5 h-5 rounded-full border-[3px] border-[#151C2C] z-10 mr-3 ${event.status === 'completed' ? 'bg-emerald-500' : event.status === 'pending' ? 'bg-blue-500' : 'bg-slate-700'}`}>
+                    {event.status === 'completed' ? <div className="w-1.5 h-1.5 bg-white rounded-full" /> : 
+                     event.status === 'pending' ? <div className="w-1.5 h-1.5 bg-[#151C2C] rounded-full" /> : null}
+                  </div>
+                  <div className="flex-1 -mt-1">
+                    <h4 className={`text-xs font-semibold ${event.status === 'upcoming' ? 'text-slate-300' : 'text-white'}`}>{event.title}</h4>
+                    <p className="text-[10px] text-slate-400">{event.description}</p>
+                  </div>
+                  {event.status === 'completed' ? <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" /> : 
+                   <Circle className="h-4 w-4 text-slate-600 shrink-0 mt-0.5" />}
                 </div>
-                <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
-              </div>
-              
-              {/* Event 2 */}
-              <div className="relative flex items-start">
-                <div className="absolute -left-1 text-[10px] text-slate-400 font-medium mt-0.5">10:30 AM</div>
-                <div className="ml-14 flex items-center justify-center w-5 h-5 rounded-full border-[3px] border-[#151C2C] bg-emerald-500 z-10 mr-3">
-                  <div className="w-1.5 h-1.5 bg-white rounded-full" />
-                </div>
-                <div className="flex-1 -mt-1">
-                  <h4 className="text-xs font-semibold text-white">Morning Walk</h4>
-                  <p className="text-[10px] text-slate-400">30 min</p>
-                </div>
-                <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
-              </div>
-
-              {/* Event 3 */}
-              <div className="relative flex items-start">
-                <div className="absolute -left-1 text-[10px] text-slate-400 font-medium mt-0.5">01:00 PM</div>
-                <div className="ml-14 flex items-center justify-center w-5 h-5 rounded-full border-[3px] border-[#151C2C] bg-emerald-500 z-10 mr-3">
-                  <div className="w-1.5 h-1.5 bg-white rounded-full" />
-                </div>
-                <div className="flex-1 -mt-1">
-                  <h4 className="text-xs font-semibold text-white">Lunch</h4>
-                  <p className="text-[10px] text-slate-400">Eat healthy</p>
-                </div>
-                <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
-              </div>
-
-              {/* Event 4 (Pending) */}
-              <div className="relative flex items-start">
-                <div className="absolute -left-1 text-[10px] text-slate-400 font-medium mt-0.5">06:00 PM</div>
-                <div className="ml-14 flex items-center justify-center w-5 h-5 rounded-full border-[3px] border-[#151C2C] bg-blue-500 z-10 mr-3">
-                  <div className="w-1.5 h-1.5 bg-[#151C2C] rounded-full" />
-                </div>
-                <div className="flex-1 -mt-1">
-                  <h4 className="text-xs font-semibold text-white">Workout</h4>
-                  <p className="text-[10px] text-slate-400">Strength Training</p>
-                </div>
-                <Circle className="h-4 w-4 text-slate-600 shrink-0 mt-0.5" />
-              </div>
-
-              {/* Event 5 (Pending) */}
-              <div className="relative flex items-start">
-                <div className="absolute -left-1 text-[10px] text-slate-400 font-medium mt-0.5">09:30 PM</div>
-                <div className="ml-14 flex items-center justify-center w-5 h-5 rounded-full border-[3px] border-[#151C2C] bg-slate-700 z-10 mr-3"></div>
-                <div className="flex-1 -mt-1">
-                  <h4 className="text-xs font-semibold text-slate-300">Sleep</h4>
-                  <p className="text-[10px] text-slate-500">7-8 hours</p>
-                </div>
-                <Circle className="h-4 w-4 text-slate-600 shrink-0 mt-0.5" />
-              </div>
-
+              )) : (
+                <p className="text-xs text-slate-400">No events scheduled for today.</p>
+              )}
             </div>
           </div>
 
@@ -301,7 +278,7 @@ export default function Dashboard() {
               <div className="bg-slate-800/20 rounded-xl p-3 flex flex-col justify-between">
                 <div>
                   <p className="text-[10px] text-slate-400 mb-1">Blood Pressure</p>
-                  <p className="text-lg font-bold text-white leading-tight">120/80</p>
+                  {isSummaryLoading ? <Skeleton className="h-6 w-16 bg-slate-800" /> : <p className="text-lg font-bold text-white leading-tight">{overview.blood_pressure}</p>}
                   <p className="text-[9px] text-slate-500">mmHg</p>
                 </div>
                 <div className="h-10 mt-2 w-full flex items-end">
@@ -315,7 +292,7 @@ export default function Dashboard() {
               <div className="bg-slate-800/20 rounded-xl p-3 flex flex-col justify-between">
                 <div>
                   <p className="text-[10px] text-slate-400 mb-1">Blood Sugar</p>
-                  <p className="text-lg font-bold text-white leading-tight">98</p>
+                  {isSummaryLoading ? <Skeleton className="h-6 w-12 bg-slate-800" /> : <p className="text-lg font-bold text-white leading-tight">{overview.blood_sugar}</p>}
                   <p className="text-[9px] text-slate-500">mg/dL</p>
                 </div>
                 <div className="h-10 mt-2 w-full flex items-end">
@@ -329,7 +306,7 @@ export default function Dashboard() {
               <div className="bg-slate-800/20 rounded-xl p-3 flex flex-col justify-between">
                 <div>
                   <p className="text-[10px] text-slate-400 mb-1">BMI</p>
-                  <p className="text-lg font-bold text-white leading-tight">24.5</p>
+                  {isSummaryLoading ? <Skeleton className="h-6 w-12 bg-slate-800" /> : <p className="text-lg font-bold text-white leading-tight">{overview.bmi}</p>}
                   <p className="text-[9px] text-emerald-500">Normal</p>
                 </div>
                 <div className="h-10 mt-2 w-full flex items-end">
@@ -343,7 +320,7 @@ export default function Dashboard() {
               <div className="bg-slate-800/20 rounded-xl p-3 flex flex-col justify-between">
                 <div>
                   <p className="text-[10px] text-slate-400 mb-1">Weight</p>
-                  <p className="text-lg font-bold text-white leading-tight">65 <span className="text-xs font-normal">kg</span></p>
+                  {isSummaryLoading ? <Skeleton className="h-6 w-16 bg-slate-800" /> : <p className="text-lg font-bold text-white leading-tight">{overview.weight} <span className="text-xs font-normal">kg</span></p>}
                   <p className="text-[9px] text-slate-500">-1.2 kg</p>
                 </div>
                 <div className="h-10 mt-2 w-full flex items-end">
@@ -368,53 +345,29 @@ export default function Dashboard() {
             </div>
             
             <div className="space-y-3">
-              <div className="flex items-center justify-between p-2 hover:bg-slate-800/30 rounded-xl transition-colors cursor-pointer group">
-                <div className="flex items-center space-x-3">
-                  <div className="h-9 w-9 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-500">
-                    <FileText className="h-4 w-4" />
-                  </div>
-                  <div>
-                    <p className="text-xs font-semibold text-slate-200">Complete Blood Count</p>
-                    <p className="text-[10px] text-slate-400">12 May 2024</p>
-                  </div>
+              {isSummaryLoading ? (
+                <div className="space-y-3">
+                  {[1, 2, 3].map(i => <Skeleton key={i} className="h-12 w-full rounded-xl bg-slate-800" />)}
                 </div>
-                <div className="flex items-center space-x-3">
-                  <span className="text-[10px] px-2 py-0.5 rounded text-emerald-500 border border-emerald-500/20">Normal</span>
-                  <ChevronRight className="h-4 w-4 text-slate-600 group-hover:text-slate-400" />
-                </div>
-              </div>
-              
-              <div className="flex items-center justify-between p-2 hover:bg-slate-800/30 rounded-xl transition-colors cursor-pointer group">
-                <div className="flex items-center space-x-3">
-                  <div className="h-9 w-9 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-500">
-                    <FileText className="h-4 w-4" />
+              ) : summary?.recent_reports ? summary.recent_reports.map((report: any) => (
+                <div key={report.id} className="flex items-center justify-between p-2 hover:bg-slate-800/30 rounded-xl transition-colors cursor-pointer group">
+                  <div className="flex items-center space-x-3">
+                    <div className={`h-9 w-9 rounded-lg flex items-center justify-center ${report.color === 'emerald' ? 'bg-emerald-500/10 text-emerald-500' : report.color === 'amber' ? 'bg-amber-500/10 text-amber-500' : 'bg-blue-500/10 text-blue-500'}`}>
+                      <FileText className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold text-slate-200">{report.title}</p>
+                      <p className="text-[10px] text-slate-400">{report.date}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-xs font-semibold text-slate-200">Thyroid Profile</p>
-                    <p className="text-[10px] text-slate-400">08 May 2024</p>
+                  <div className="flex items-center space-x-3">
+                    <span className={`text-[10px] px-2 py-0.5 rounded border ${report.color === 'emerald' ? 'text-emerald-500 border-emerald-500/20' : report.color === 'amber' ? 'text-amber-500 border-amber-500/20' : 'text-blue-500 border-blue-500/20'}`}>{report.status}</span>
+                    <ChevronRight className="h-4 w-4 text-slate-600 group-hover:text-slate-400" />
                   </div>
                 </div>
-                <div className="flex items-center space-x-3">
-                  <span className="text-[10px] px-2 py-0.5 rounded text-emerald-500 border border-emerald-500/20">Normal</span>
-                  <ChevronRight className="h-4 w-4 text-slate-600 group-hover:text-slate-400" />
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between p-2 hover:bg-slate-800/30 rounded-xl transition-colors cursor-pointer group">
-                <div className="flex items-center space-x-3">
-                  <div className="h-9 w-9 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-500">
-                    <FileText className="h-4 w-4" />
-                  </div>
-                  <div>
-                    <p className="text-xs font-semibold text-slate-200">Vitamin D Test</p>
-                    <p className="text-[10px] text-slate-400">01 May 2024</p>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <span className="text-[10px] px-2 py-0.5 rounded text-amber-500 border border-amber-500/20">Low</span>
-                  <ChevronRight className="h-4 w-4 text-slate-600 group-hover:text-slate-400" />
-                </div>
-              </div>
+              )) : (
+                <p className="text-xs text-slate-400">No recent reports found.</p>
+              )}
             </div>
           </div>
 
@@ -426,22 +379,28 @@ export default function Dashboard() {
                 <button className="text-[11px] text-blue-500 hover:text-blue-400 font-medium transition-colors">View All</button>
               </div>
               
-              <div className="bg-slate-800/30 rounded-xl p-4 flex items-center justify-between border border-slate-700/50">
-                <div className="flex items-center space-x-3">
-                  <div className="relative">
-                    <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=100&h=100&fit=crop" alt="Dr. Sarah" className="w-10 h-10 rounded-full border border-slate-700 object-cover" />
-                    <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 rounded-full border border-[#151C2C]" />
-                  </div>
-                  <div>
-                    <p className="text-xs font-bold text-slate-200">Dr. Sarah Johnson</p>
-                    <p className="text-[10px] text-slate-400 mb-1">Cardiologist</p>
-                    <div className="flex items-center space-x-2 text-[9px] text-slate-400">
-                      <span className="flex items-center"><Calendar className="h-2.5 w-2.5 mr-1" /> 15 May 2024</span>
-                      <span className="flex items-center"><Heart className="h-2.5 w-2.5 mr-1" /> Care+ Hospital</span>
+              {isSummaryLoading ? (
+                <Skeleton className="h-20 w-full rounded-xl bg-slate-800" />
+              ) : summary?.upcoming_appointment ? (
+                <div className="bg-slate-800/30 rounded-xl p-4 flex items-center justify-between border border-slate-700/50">
+                  <div className="flex items-center space-x-3">
+                    <div className="relative">
+                      <img src={summary.upcoming_appointment.image || "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=100&h=100&fit=crop"} alt={summary.upcoming_appointment.doctor} className="w-10 h-10 rounded-full border border-slate-700 object-cover" />
+                      <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 rounded-full border border-[#151C2C]" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-slate-200">{summary.upcoming_appointment.doctor}</p>
+                      <p className="text-[10px] text-slate-400 mb-1">{summary.upcoming_appointment.specialty}</p>
+                      <div className="flex items-center space-x-2 text-[9px] text-slate-400">
+                        <span className="flex items-center"><Calendar className="h-2.5 w-2.5 mr-1" /> {summary.upcoming_appointment.date}</span>
+                        <span className="flex items-center"><Heart className="h-2.5 w-2.5 mr-1" /> {summary.upcoming_appointment.location}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              ) : (
+                <p className="text-xs text-slate-400">No upcoming appointments.</p>
+              )}
             </div>
 
             <button className="w-full mt-4 bg-red-500/10 hover:bg-red-500/20 text-red-500 rounded-xl p-3 flex flex-col items-center justify-center border border-red-500/20 transition-colors">
@@ -462,49 +421,34 @@ export default function Dashboard() {
           </div>
           
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="bg-[#151C2C] rounded-xl p-3 border border-slate-800 flex items-center space-x-3 cursor-pointer hover:bg-slate-800/50 transition-colors">
-              <div className="h-9 w-9 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-500">
-                <Droplet className="h-4 w-4 fill-blue-500/20" />
-              </div>
-              <div>
-                <p className="text-[9px] text-slate-400">Increase</p>
-                <p className="text-xs font-bold text-slate-200">Water Intake</p>
-                <p className="text-[9px] text-slate-500">+2 glasses daily</p>
-              </div>
-            </div>
+            {isInsightsLoading ? (
+              [1, 2, 3, 4].map(i => <Skeleton key={i} className="h-16 w-full rounded-xl bg-slate-800" />)
+            ) : insights?.recommendations ? insights.recommendations.map((rec: any, index: number) => {
+              // Map types to icons and colors
+              let Icon = Activity;
+              let colorClass = "text-blue-500 bg-blue-500/10";
+              let iconFill = "fill-blue-500/20";
+              
+              if (rec.type === 'hydration') { Icon = Droplet; colorClass = "text-blue-500 bg-blue-500/10"; iconFill = "fill-blue-500/20"; }
+              else if (rec.type === 'nutrition') { Icon = Utensils; colorClass = "text-emerald-500 bg-emerald-500/10"; iconFill = "fill-emerald-500/20"; }
+              else if (rec.type === 'diet') { Icon = Activity; colorClass = "text-red-500 bg-red-500/10"; iconFill = "fill-red-500/20"; }
+              else if (rec.type === 'mental') { Icon = Brain; colorClass = "text-indigo-400 bg-indigo-500/10"; iconFill = "fill-indigo-500/20"; }
 
-            <div className="bg-[#151C2C] rounded-xl p-3 border border-slate-800 flex items-center space-x-3 cursor-pointer hover:bg-slate-800/50 transition-colors">
-              <div className="h-9 w-9 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500">
-                <Utensils className="h-4 w-4 fill-emerald-500/20" />
-              </div>
-              <div>
-                <p className="text-[9px] text-slate-400">Add More</p>
-                <p className="text-xs font-bold text-slate-200">Protein</p>
-                <p className="text-[9px] text-slate-500">For muscle health</p>
-              </div>
-            </div>
-
-            <div className="bg-[#151C2C] rounded-xl p-3 border border-slate-800 flex items-center space-x-3 cursor-pointer hover:bg-slate-800/50 transition-colors">
-              <div className="h-9 w-9 rounded-full bg-red-500/10 flex items-center justify-center text-red-500">
-                <Activity className="h-4 w-4" />
-              </div>
-              <div>
-                <p className="text-[9px] text-slate-400">Reduce</p>
-                <p className="text-xs font-bold text-slate-200">Sugar Intake</p>
-                <p className="text-[9px] text-slate-500">For better energy</p>
-              </div>
-            </div>
-
-            <div className="bg-[#151C2C] rounded-xl p-3 border border-slate-800 flex items-center space-x-3 cursor-pointer hover:bg-slate-800/50 transition-colors">
-              <div className="h-9 w-9 rounded-full bg-indigo-500/10 flex items-center justify-center text-indigo-400">
-                <Brain className="h-4 w-4 fill-indigo-500/20" />
-              </div>
-              <div>
-                <p className="text-[9px] text-slate-400">Try</p>
-                <p className="text-xs font-bold text-slate-200">Meditation</p>
-                <p className="text-[9px] text-slate-500">For stress relief</p>
-              </div>
-            </div>
+              return (
+                <div key={index} className="bg-[#151C2C] rounded-xl p-3 border border-slate-800 flex items-center space-x-3 cursor-pointer hover:bg-slate-800/50 transition-colors">
+                  <div className={`h-9 w-9 rounded-full flex items-center justify-center ${colorClass}`}>
+                    <Icon className={`h-4 w-4 ${iconFill}`} />
+                  </div>
+                  <div>
+                    <p className="text-[9px] text-slate-400">{rec.action}</p>
+                    <p className="text-xs font-bold text-slate-200">{rec.topic}</p>
+                    <p className="text-[9px] text-slate-500">{rec.description}</p>
+                  </div>
+                </div>
+              );
+            }) : (
+              <p className="text-xs text-slate-400 col-span-4">Generating personalized recommendations...</p>
+            )}
           </div>
         </motion.div>
 

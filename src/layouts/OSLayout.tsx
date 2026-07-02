@@ -170,11 +170,50 @@ export default function OSLayout() {
       </AnimatePresence>
 
       {/* MAIN CONTENT CANVAS */}
-      <main className="flex-1 h-full overflow-y-auto relative pt-16 md:pt-0 bg-[#0B0F19]">
+      <main className="flex-1 h-full overflow-y-auto relative pt-16 pb-20 md:pt-0 md:pb-0 bg-[#0B0F19]">
         <div className="max-w-[1600px] mx-auto w-full p-4 md:p-8 min-h-full">
           <Outlet />
         </div>
       </main>
+
+      {/* MOBILE BOTTOM NAVBAR */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-[#0E1320] border-t border-slate-800/50 py-2.5 px-4 flex items-center justify-around z-45 shadow-2xl backdrop-blur-lg bg-opacity-95">
+        <Link 
+          to="/patient/home" 
+          className={`flex flex-col items-center justify-center space-y-1 transition-colors ${activeNavItem.id === "home" ? "text-[#2563EB]" : "text-slate-400 hover:text-white"}`}
+        >
+          <Home className="h-5 w-5" />
+          <span className="text-[9px] font-bold tracking-wide">Home</span>
+        </Link>
+        <Link 
+          to="/patient/health" 
+          className={`flex flex-col items-center justify-center space-y-1 transition-colors ${activeNavItem.id === "health" ? "text-[#2563EB]" : "text-slate-400 hover:text-white"}`}
+        >
+          <Heart className="h-5 w-5" />
+          <span className="text-[9px] font-bold tracking-wide">Health</span>
+        </Link>
+        <Link 
+          to="/patient/ai" 
+          className={`flex flex-col items-center justify-center space-y-1 transition-colors ${activeNavItem.id === "ai" ? "text-[#2563EB]" : "text-slate-400 hover:text-white"}`}
+        >
+          <Sparkles className="h-5 w-5" />
+          <span className="text-[9px] font-bold tracking-wide">AI Chat</span>
+        </Link>
+        <Link 
+          to="/patient/care" 
+          className={`flex flex-col items-center justify-center space-y-1 transition-colors ${activeNavItem.id === "care" ? "text-[#2563EB]" : "text-slate-400 hover:text-white"}`}
+        >
+          <Calendar className="h-5 w-5" />
+          <span className="text-[9px] font-bold tracking-wide">Care</span>
+        </Link>
+        <button 
+          onClick={() => setIsMobileMenuOpen(true)}
+          className={`flex flex-col items-center justify-center space-y-1 transition-colors ${isMobileMenuOpen ? "text-[#2563EB]" : "text-slate-400 hover:text-white"}`}
+        >
+          <Menu className="h-5 w-5" />
+          <span className="text-[9px] font-bold tracking-wide">Menu</span>
+        </button>
+      </nav>
 
     </div>
   );

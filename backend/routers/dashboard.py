@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from typing import Dict, Any, List
 from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
-from app.db.mongodb import get_mongodb
+from app.db.mongodb import get_db
 import motor.motor_asyncio
 import random
 
@@ -18,7 +18,7 @@ async def get_current_user_id():
 @router.get("/summary", response_model=Dict[str, Any])
 async def get_dashboard_summary(
     user_id: str = Depends(get_current_user_id),
-    db: motor.motor_asyncio.AsyncIOMotorDatabase = Depends(get_mongodb)
+    db: motor.motor_asyncio.AsyncIOMotorDatabase = Depends(get_db)
 ):
     """
     Returns a unified dashboard summary including vitals, timeline, reports, and appointments.

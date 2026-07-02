@@ -8,7 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { motion } from 'framer-motion';
 
 // Define the API key
-const API_KEY = 'AIzaSyAu4GFDGSwt_wRtLX59oZecm3RUMzhczAo';
+const API_KEY = import.meta.env.VITE_GEMINI_API_KEY || 'AIzaSyAu4GFDGSwt_wRtLX59oZecm3RUMzhczAo';
 const MODEL = 'gemini-2.0-flash';
 
 // Define message type

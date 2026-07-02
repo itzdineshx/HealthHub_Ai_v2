@@ -42,6 +42,11 @@ const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const PatientRecords = lazy(() => import("./pages/PatientRecords"));
 const HealthForm = lazy(() => import("./pages/HealthForm"));
 const HealthAssessment = lazy(() => import("./pages/HealthAssessment"));
+const AIChatbot = lazy(() => import("./pages/AIChatbot"));
+const Care = lazy(() => import("./pages/Care"));
+const Medications = lazy(() => import("./pages/Medications"));
+const FamilyHealth = lazy(() => import("./pages/FamilyHealth"));
+const Emergency = lazy(() => import("./pages/Emergency"));
 
 // Protected route component
 interface ProtectedRouteProps {
@@ -86,10 +91,16 @@ const App = () => {
         {/* Patient Workspace */}
         <Route path="patient">
           <Route path="home" element={<Dashboard />} />
-          <Route path="health" element={<WorkspaceShell title="Health Hub" description="Your comprehensive health timeline and medical records." icon={Heart} colorClass="bg-medical-blue/10 text-medical-blue" />} />
-          <Route path="ai" element={<WorkspaceShell title="AI Copilot" description="Your dedicated medical intelligence and chat interface." icon={Sparkles} colorClass="bg-ai-purple/10 text-ai-purple" />} />
-          <Route path="care" element={<WorkspaceShell title="Care Circle" description="Manage doctors, appointments, and telemedicine." icon={Calendar} colorClass="bg-warning-amber/10 text-warning-amber" />} />
-          <Route path="wellness" element={<WorkspaceShell title="Wellness" description="Track fitness, diet, sleep, and lifestyle." icon={Activity} colorClass="bg-info-cyan/10 text-info-cyan" />} />
+          <Route path="health" element={<HealthAssessment />} />
+          <Route path="ai" element={<AIChatbot />} />
+          <Route path="care" element={<Care />} />
+          <Route path="medications" element={<Medications />} />
+          <Route path="fitness" element={<TrainingDashboard />} />
+          <Route path="nutrition" element={<Diet />} />
+          <Route path="records" element={<HealthRecords />} />
+          <Route path="family" element={<FamilyHealth />} />
+          <Route path="emergency" element={<Emergency />} />
+          <Route path="settings" element={<AccountManager />} />
           <Route path="profile" element={<Profile />} />
           <Route index element={<Navigate to="/patient/home" replace />} />
         </Route>
