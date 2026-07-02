@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import Layout from "@/components/layout/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -140,16 +141,29 @@ const TrainingDashboard = () => {
 
   return (
     <Layout>
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold text-forest dark:text-sage-light">Training Dashboard</h1>
-          {/* Buttons for saving, scheduling, starting workout will go here, conditionally rendered based on tab */}
-        </div>
+      <div className="space-y-6 text-slate-100 max-w-[1600px] mx-auto pb-6">
+        <motion.div 
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="relative bg-gradient-to-r from-[#1E1B4B]/80 to-[#0F172A]/80 border border-blue-900/30 rounded-3xl p-6 md:p-8 overflow-hidden shadow-2xl backdrop-blur-md"
+        >
+          <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 rounded-full blur-[80px] pointer-events-none" />
+          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6 text-left">
+            <div className="space-y-2">
+              <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight bg-gradient-to-r from-white via-slate-100 to-blue-400 bg-clip-text text-transparent">
+                Training & Fitness
+              </h1>
+              <p className="text-slate-400 text-sm max-w-xl leading-relaxed">
+                Generate personalized workout routines powered by AI, track sets/reps logs, and monitor calorie burn rates.
+              </p>
+            </div>
+          </div>
+        </motion.div>
 
         <Tabs defaultValue="fitness" onValueChange={setActiveTab}>
-          <TabsList className="mb-6">
-            <TabsTrigger value="fitness">Fitness Workouts</TabsTrigger>
-            <TabsTrigger value="gym">Gym Training</TabsTrigger>
+          <TabsList className="mb-6 bg-slate-900/40 p-1.5 rounded-xl border border-slate-850 w-fit">
+            <TabsTrigger value="fitness" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white text-slate-400 font-bold rounded-lg px-4 py-2 transition-all">Fitness Workouts</TabsTrigger>
+            <TabsTrigger value="gym" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white text-slate-400 font-bold rounded-lg px-4 py-2 transition-all">Gym Training</TabsTrigger>
           </TabsList>
           
           {/* Fitness Workouts Tab Content */}
@@ -157,83 +171,86 @@ const TrainingDashboard = () => {
             {/* Content from FitnessTrainer.tsx */}
              {/* Quick Stats */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-          <Card className="bg-white dark:bg-slate-800">
+          <Card className="bg-[#151C2C] border-slate-800 shadow-xl">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">Weekly Activity</p>
-                  <h4 className="text-2xl font-bold">4/7 days</h4>
+                  <p className="text-sm text-slate-400 font-bold uppercase tracking-wider">Weekly Activity</p>
+                  <h4 className="text-2xl font-black text-white mt-1">4/7 days</h4>
                 </div>
-                <div className="h-12 w-12 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center">
-                  <Calendar className="h-6 w-6 text-green-500" />
+                <div className="h-12 w-12 bg-blue-500/10 rounded-full flex items-center justify-center">
+                  <Calendar className="h-6 w-6 text-blue-500" />
                 </div>
               </div>
               <div className="mt-4">
-                <div className="w-full bg-gray-200 rounded-full h-2.5">
-                  <div className="bg-green-500 h-2.5 rounded-full" style={{ width: '57%' }}></div>
+                <div className="w-full bg-slate-900 rounded-full h-2">
+                  <div className="bg-blue-600 h-2 rounded-full" style={{ width: '57%' }}></div>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-white dark:bg-slate-800">
+          <Card className="bg-[#151C2C] border-slate-800 shadow-xl">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">Calories Burned</p>
-                  <h4 className="text-2xl font-bold">1,248</h4>
+                  <p className="text-sm text-slate-400 font-bold uppercase tracking-wider">Calories Burned</p>
+                  <h4 className="text-2xl font-black text-white mt-1">1,248</h4>
                 </div>
-                <div className="h-12 w-12 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center">
-                  <BarChart className="h-6 w-6 text-orange-500" />
+                <div className="h-12 w-12 bg-amber-500/10 rounded-full flex items-center justify-center">
+                  <BarChart className="h-6 w-6 text-amber-500" />
                 </div>
               </div>
               <div className="mt-4">
-                <span className="text-green-500 text-xs font-medium">↑ 12%</span>
-                <span className="text-xs text-muted-foreground ml-1">from last week</span>
+                <span className="text-emerald-450 text-xs font-bold">↑ 12%</span>
+                <span className="text-xs text-slate-500 font-semibold ml-1">from last week</span>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-white dark:bg-slate-800">
+          <Card className="bg-[#151C2C] border-slate-800 shadow-xl">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">Workout Minutes</p>
-                  <h4 className="text-2xl font-bold">185</h4>
+                  <p className="text-sm text-slate-400 font-bold uppercase tracking-wider">Workout Minutes</p>
+                  <h4 className="text-2xl font-black text-white mt-1">185</h4>
                 </div>
-                <div className="h-12 w-12 bg-blue-100 dark:bg-blue-900/20 rounded-full flex items-center justify-center">
+                <div className="h-12 w-12 bg-blue-500/10 rounded-full flex items-center justify-center">
                   <Timer className="h-6 w-6 text-blue-500" />
                 </div>
               </div>
               <div className="mt-4">
-                <span className="text-green-500 text-xs font-medium">↑ 8%</span>
-                <span className="text-xs text-muted-foreground ml-1">from last week</span>
+                <span className="text-emerald-450 text-xs font-bold">↑ 8%</span>
+                <span className="text-xs text-slate-500 font-semibold ml-1">from last week</span>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-white dark:bg-slate-800">
+          <Card className="bg-[#151C2C] border-slate-800 shadow-xl">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">Heart Health</p>
-                  <h4 className="text-2xl font-bold">Good</h4>
+                  <p className="text-sm text-slate-400 font-bold uppercase tracking-wider">Heart Health</p>
+                  <h4 className="text-2xl font-black text-white mt-1">Good</h4>
                 </div>
-                <div className="h-12 w-12 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center">
+                <div className="h-12 w-12 bg-red-500/10 rounded-full flex items-center justify-center">
                   <Heart className="h-6 w-6 text-red-500" />
                 </div>
               </div>
               <div className="mt-4">
-                <span className="text-xs text-muted-foreground">Average HR: 72 BPM</span>
+                <span className="text-xs text-slate-500 font-semibold">Average HR: 72 BPM</span>
               </div>
             </CardContent>
           </Card>
         </div>
 
         {/* Workout Library */}
-        <Card className="mb-6">
+        <Card className="bg-[#151C2C] border-slate-800 shadow-xl mb-6">
           <CardHeader>
-            <CardTitle className="text-xl font-semibold text-forest">Workout Library</CardTitle>
+            <CardTitle className="text-xl font-bold text-white flex items-center gap-1.5">
+              <Dumbbell className="h-5 w-5 text-blue-500" />
+              <span>Workout Library</span>
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="recommended">
@@ -604,10 +621,12 @@ const TrainingDashboard = () => {
           </CardContent>
         </Card>
 
-          {/* Workout Plan Generator Section */}
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle className="text-xl font-semibold text-forest">Workout Plan Generator (AI Powered)</CardTitle>
+          <Card className="bg-[#151C2C] border-slate-800 shadow-xl mb-6">
+            <CardHeader className="pb-3 border-b border-slate-850">
+              <CardTitle className="text-xl font-bold text-white flex items-center gap-1.5">
+                <Target className="h-5 w-5 text-blue-500" />
+                <span>Workout Plan Generator (AI Powered)</span>
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -643,9 +662,9 @@ const TrainingDashboard = () => {
                 </Button>
                 
                  {/* Display Generated Plan or Error */}
-                 {generatedPlan && (
-                   <div className="mt-6 p-4 bg-gray-100 dark:bg-gray-700 rounded-md whitespace-pre-wrap text-sm text-foreground">
-                     <h4 className="text-lg font-semibold mb-2 text-forest dark:text-sage-light">Generated Workout Plan:</h4>
+                  {generatedPlan && (
+                    <div className="mt-6 p-5 bg-slate-900/30 border border-slate-850 rounded-2xl whitespace-pre-wrap text-sm text-foreground">
+                      <h4 className="text-lg font-bold mb-2 text-white">Generated Workout Plan:</h4>
                      {generatedPlan}
                    </div>
                  )}
@@ -739,21 +758,23 @@ const TrainingDashboard = () => {
           </Card>
         </div>
 
-        {/* Current Training Plan */}
-        <Card className="mb-6">
-          <CardHeader>
+        <Card className="bg-[#151C2C] border-slate-800 shadow-xl mb-6">
+          <CardHeader className="pb-3 border-b border-slate-850">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between">
               <div>
-                <CardTitle className="text-xl font-semibold text-forest">Current Training Plan</CardTitle>
-                <p className="text-sm text-muted-foreground">Strength Building - Intermediate</p>
+                <CardTitle className="text-xl font-bold text-white flex items-center gap-1.5">
+                  <Activity className="h-5 w-5 text-blue-500" />
+                  <span>Current Training Plan</span>
+                </CardTitle>
+                <p className="text-xs text-slate-450 mt-1 font-semibold">Strength Building - Intermediate</p>
               </div>
               <div className="flex items-center mt-2 md:mt-0">
                 <div className="mr-4">
                   <p className="text-sm text-muted-foreground">Progress</p>
                   <p className="font-medium">Week 4 of 12</p>
                 </div>
-                <div className="w-24 bg-gray-200 rounded-full h-2">
-                  <div className="bg-forest h-2 rounded-full" style={{ width: '33%' }}></div>
+                <div className="w-24 bg-slate-900 rounded-full h-2">
+                  <div className="bg-blue-600 h-2 rounded-full" style={{ width: '33%' }}></div>
                 </div>
               </div>
             </div>
@@ -831,10 +852,10 @@ const TrainingDashboard = () => {
                         <h4 className="font-medium">{exercise.name}</h4>
                         <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1 text-sm text-muted-foreground">
                           <div className="flex items-center">
-                            <span className="font-medium text-forest mr-1">{exercise.sets}</span> sets
+                            <span className="font-bold text-blue-550 mr-1">{exercise.sets}</span> sets
                           </div>
                           <div className="flex items-center">
-                            <span className="font-medium text-forest mr-1">{exercise.reps}</span> reps
+                            <span className="font-bold text-blue-550 mr-1">{exercise.reps}</span> reps
                           </div>
                           <div className="flex items-center">
                             <Clock className="h-3 w-3 mr-1" />

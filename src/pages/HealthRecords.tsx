@@ -752,8 +752,8 @@ const HealthRecords = () => {
     <Layout>
       <div className="relative overflow-hidden">
         {/* Background effects */}
-        <div className="absolute top-40 left-20 w-72 h-72 bg-sage/20 dark:bg-sage/10 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse"></div>
-        <div className="absolute bottom-40 right-20 w-80 h-80 bg-forest/10 dark:bg-cream/10 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse" style={{ animationDuration: '15s' }}></div>
+        <div className="absolute top-40 left-20 w-72 h-72 bg-blue-500/10 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
+        <div className="absolute bottom-40 right-20 w-80 h-80 bg-indigo-500/10 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-pulse" style={{ animationDuration: '15s' }}></div>
       
         <div className="container relative mx-auto px-4 py-8">
           <motion.div 
@@ -762,13 +762,13 @@ const HealthRecords = () => {
             transition={{ duration: 0.5 }}
             className="flex justify-between items-center mb-6"
           >
-            <h1 className="text-3xl font-bold text-forest dark:text-sage-light mb-2">Health Records</h1>
+            <h1 className="text-3xl font-extrabold text-white mb-2">Health Records</h1>
             <div className="flex space-x-2">
-              <Button variant="outline" onClick={downloadReport} className="group">
+              <Button variant="outline" onClick={downloadReport} className="group border-slate-800 bg-[#151C2C] text-slate-200 hover:bg-slate-800 rounded-xl h-10">
                 <Download className="mr-2 h-4 w-4 group-hover:scale-110 transition-transform" />
                 Export
               </Button>
-              <Button variant="outline" onClick={shareReport} className="group">
+              <Button variant="outline" onClick={shareReport} className="group border-slate-800 bg-[#151C2C] text-slate-200 hover:bg-slate-800 rounded-xl h-10">
                 <Share2 className="mr-2 h-4 w-4 group-hover:scale-110 transition-transform" />
                 Share
               </Button>
@@ -780,10 +780,10 @@ const HealthRecords = () => {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: isLoaded ? 1 : 0, y: isLoaded ? 0 : 10 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="mb-6 p-3 bg-sage/10 dark:bg-forest-light/10 rounded-lg flex items-center space-x-3 border border-sage/30 dark:border-sage/20"
+            className="mb-6 p-4 bg-slate-900/40 border border-slate-800/80 rounded-2xl flex items-center space-x-3 shadow-inner"
           >
-            <Shield className="text-forest dark:text-sage-light h-5 w-5" />
-            <p className="text-sm text-muted-foreground dark:text-sage/80">
+            <Shield className="text-blue-500 h-5 w-5 shrink-0" />
+            <p className="text-sm text-slate-400 font-medium leading-relaxed">
               Your health records are securely encrypted and only accessible by you and your authorized healthcare providers.
             </p>
           </motion.div>
@@ -794,24 +794,24 @@ const HealthRecords = () => {
             animate={{ opacity: isLoaded ? 1 : 0, y: isLoaded ? 0 : 20 }}
             transition={{ duration: 0.5, delay: 0.3 }}
           >
-            <Card className="backdrop-blur-sm bg-white/80 dark:bg-forest-dark/80 border-sage/20 dark:border-sage/30 shadow-lg">
-              <CardHeader>
-                <CardTitle className="text-xl font-semibold text-forest dark:text-sage-light">Your Health Information</CardTitle>
+            <Card className="bg-[#151C2C] border-slate-800 shadow-xl rounded-3xl">
+              <CardHeader className="pb-3 border-b border-slate-850">
+                <CardTitle className="text-xl font-bold text-white">Your Health Information</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="pt-6">
                 <Tabs defaultValue="medical" value={activeTab} onValueChange={setActiveTab}>
-                  <TabsList className="mb-4 bg-sage/10 dark:bg-forest-light/20">
-                    <TabsTrigger value="medical" className="data-[state=active]:bg-forest data-[state=active]:text-white dark:data-[state=active]:bg-sage dark:data-[state=active]:text-forest">Medical Records</TabsTrigger>
-                    <TabsTrigger value="lab" className="data-[state=active]:bg-forest data-[state=active]:text-white dark:data-[state=active]:bg-sage dark:data-[state=active]:text-forest">Lab Results</TabsTrigger>
-                    <TabsTrigger value="prescriptions" className="data-[state=active]:bg-forest data-[state=active]:text-white dark:data-[state=active]:bg-sage dark:data-[state=active]:text-forest">Prescriptions</TabsTrigger>
-                    <TabsTrigger value="vaccinations" className="data-[state=active]:bg-forest data-[state=active]:text-white dark:data-[state=active]:bg-sage dark:data-[state=active]:text-forest">Vaccinations</TabsTrigger>
+                  <TabsList className="mb-6 bg-slate-900/40 p-1.5 rounded-2xl border border-slate-850 flex flex-wrap gap-1 w-fit">
+                    <TabsTrigger value="medical" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white text-slate-400 font-bold rounded-xl px-4 py-2 transition-all">Medical Records</TabsTrigger>
+                    <TabsTrigger value="lab" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white text-slate-400 font-bold rounded-xl px-4 py-2 transition-all">Lab Results</TabsTrigger>
+                    <TabsTrigger value="prescriptions" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white text-slate-400 font-bold rounded-xl px-4 py-2 transition-all">Prescriptions</TabsTrigger>
+                    <TabsTrigger value="vaccinations" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white text-slate-400 font-bold rounded-xl px-4 py-2 transition-all">Vaccinations</TabsTrigger>
                   </TabsList>
                   
                   {/* Medical Records Tab */}
                   <TabsContent value="medical" className="space-y-4">
-                    <div className="flex justify-between items-center">
-                      <h2 className="text-lg font-semibold text-forest dark:text-sage-light">Recent Medical Records</h2>
-                      <Button variant="outline" onClick={() => setShowUploadDialog(true)}>
+                    <div className="flex justify-between items-center pb-2">
+                      <h2 className="text-lg font-bold text-slate-200">Recent Medical Records</h2>
+                      <Button variant="outline" onClick={() => setShowUploadDialog(true)} className="border-slate-800 bg-slate-900 text-slate-350 hover:bg-slate-800 rounded-xl h-9 text-xs">
                         <FileText className="mr-2 h-4 w-4" />
                         Add Record
                       </Button>
@@ -819,7 +819,7 @@ const HealthRecords = () => {
                     
                     <ScrollArea className="h-[300px] pr-4">
                       <motion.div 
-                        className="space-y-3"
+                        className="space-y-2.5"
                         variants={container}
                         initial="hidden"
                         animate="show"
@@ -833,25 +833,25 @@ const HealthRecords = () => {
                         ].map((record, index) => (
                           <motion.div 
                             key={index} 
-                            className="flex items-center justify-between p-3 bg-sage-light/10 hover:bg-sage-light/20 dark:bg-forest-light/10 dark:hover:bg-forest-light/20 rounded-lg transition-colors border border-sage/10 dark:border-sage/20"
+                            className="flex items-center justify-between p-3.5 bg-slate-900/30 hover:bg-slate-850 rounded-2xl transition-all border border-slate-850 hover:border-slate-800"
                             variants={item}
                           >
-                            <div>
-                              <p className="font-medium text-forest-dark dark:text-sage-light">{record.name}</p>
-                              <p className="text-sm text-muted-foreground dark:text-sage/70">{record.date} - {record.doctor}</p>
+                            <div className="space-y-0.5">
+                              <p className="font-bold text-white text-sm leading-tight">{record.name}</p>
+                              <p className="text-[11px] text-slate-500 font-semibold">{record.date} - {record.doctor}</p>
                             </div>
-                            <Button variant="ghost" size="sm" className="hover:bg-forest/10 dark:hover:bg-sage/10">View</Button>
+                            <Button variant="outline" size="sm" className="border-slate-800 bg-[#151C2C] text-slate-300 hover:bg-slate-800 text-xs rounded-xl h-8.5 px-3.5 font-bold transition-colors">View</Button>
                           </motion.div>
                         ))}
                       </motion.div>
                     </ScrollArea>
                   </TabsContent>
                   
-                  {/* Other tabs content - we'll keep the same structure but with animations */}
+                  {/* Lab Results Tab */}
                   <TabsContent value="lab" className="space-y-4">
-                    <div className="flex justify-between items-center">
-                      <h2 className="text-lg font-semibold text-forest dark:text-sage-light">Recent Lab Results</h2>
-                      <Button variant="outline" onClick={() => setShowUploadDialog(true)}>
+                    <div className="flex justify-between items-center pb-2">
+                      <h2 className="text-lg font-bold text-slate-200">Recent Lab Results</h2>
+                      <Button variant="outline" onClick={() => setShowUploadDialog(true)} className="border-slate-800 bg-slate-900 text-slate-350 hover:bg-slate-800 rounded-xl h-9 text-xs">
                         <FlaskConical className="mr-2 h-4 w-4" />
                         Add Result
                       </Button>
@@ -859,7 +859,7 @@ const HealthRecords = () => {
                     
                     <ScrollArea className="h-[300px] pr-4">
                       <motion.div
-                        className="space-y-3"
+                        className="space-y-2.5"
                         variants={container}
                         initial="hidden"
                         animate="show"
@@ -869,22 +869,23 @@ const HealthRecords = () => {
                           { name: "Cholesterol Test", date: "Mar 15, 2025", lab: "Healthcare Diagnostics" },
                           { name: "Urinalysis", date: "Feb 01, 2025", lab: "Community Labs" }
                         ].map((result, index) => (
-                          <motion.div key={index} className="flex items-center justify-between p-3 bg-sage-light/10 dark:bg-forest-light/10 hover:bg-sage-light/20 dark:hover:bg-forest-light/20 rounded-lg transition-all border border-sage/10 dark:border-sage/20" variants={item}>
-                            <div>
-                              <p className="font-medium text-forest-dark dark:text-sage-light">{result.name}</p>
-                              <p className="text-sm text-muted-foreground dark:text-sage/70">{result.date} - {result.lab}</p>
+                          <motion.div key={index} className="flex items-center justify-between p-3.5 bg-slate-900/30 hover:bg-slate-850 rounded-2xl transition-all border border-slate-850 hover:border-slate-800" variants={item}>
+                            <div className="space-y-0.5">
+                              <p className="font-bold text-white text-sm leading-tight">{result.name}</p>
+                              <p className="text-[11px] text-slate-500 font-semibold">{result.date} - {result.lab}</p>
                             </div>
-                            <Button variant="ghost" size="sm" className="hover:bg-forest/10 dark:hover:bg-sage/10">View</Button>
+                            <Button variant="outline" size="sm" className="border-slate-800 bg-[#151C2C] text-slate-300 hover:bg-slate-800 text-xs rounded-xl h-8.5 px-3.5 font-bold transition-colors">View</Button>
                           </motion.div>
                         ))}
                       </motion.div>
                     </ScrollArea>
                   </TabsContent>
                   
+                  {/* Prescriptions Tab */}
                   <TabsContent value="prescriptions" className="space-y-4">
-                    <div className="flex justify-between items-center">
-                      <h2 className="text-lg font-semibold text-forest dark:text-sage-light">Active Prescriptions</h2>
-                      <Button variant="outline" onClick={() => setShowUploadDialog(true)}>
+                    <div className="flex justify-between items-center pb-2">
+                      <h2 className="text-lg font-bold text-slate-200">Active Prescriptions</h2>
+                      <Button variant="outline" onClick={() => setShowUploadDialog(true)} className="border-slate-800 bg-slate-900 text-slate-355 hover:bg-slate-800 rounded-xl h-9 text-xs">
                         <FileText className="mr-2 h-4 w-4" />
                         Add Prescription
                       </Button>
@@ -892,7 +893,7 @@ const HealthRecords = () => {
                     
                     <ScrollArea className="h-[300px] pr-4">
                       <motion.div
-                        className="space-y-3"
+                        className="space-y-2.5"
                         variants={container}
                         initial="hidden"
                         animate="show"
@@ -902,22 +903,23 @@ const HealthRecords = () => {
                           { name: "Lisinopril", date: "Mar 10, 2025", doctor: "Dr. Robert Johnson" },
                           { name: "Vitamin D", date: "Jan 25, 2025", doctor: "Dr. Sarah Williams" }
                         ].map((prescription, index) => (
-                          <motion.div key={index} className="flex items-center justify-between p-3 bg-sage-light/10 dark:bg-forest-light/10 hover:bg-sage-light/20 dark:hover:bg-forest-light/20 rounded-lg transition-all border border-sage/10 dark:border-sage/20" variants={item}>
-                            <div>
-                              <p className="font-medium text-forest-dark dark:text-sage-light">{prescription.name}</p>
-                              <p className="text-sm text-muted-foreground dark:text-sage/70">Prescribed on {prescription.date} by {prescription.doctor}</p>
+                          <motion.div key={index} className="flex items-center justify-between p-3.5 bg-slate-900/30 hover:bg-slate-850 rounded-2xl transition-all border border-slate-850 hover:border-slate-800" variants={item}>
+                            <div className="space-y-0.5">
+                              <p className="font-bold text-white text-sm leading-tight">{prescription.name}</p>
+                              <p className="text-[11px] text-slate-500 font-semibold">Prescribed on {prescription.date} by {prescription.doctor}</p>
                             </div>
-                            <Button variant="ghost" size="sm" className="hover:bg-forest/10 dark:hover:bg-sage/10">View</Button>
+                            <Button variant="outline" size="sm" className="border-slate-800 bg-[#151C2C] text-slate-300 hover:bg-slate-800 text-xs rounded-xl h-8.5 px-3.5 font-bold transition-colors">View</Button>
                           </motion.div>
                         ))}
                       </motion.div>
                     </ScrollArea>
                   </TabsContent>
                   
+                  {/* Vaccinations Tab */}
                   <TabsContent value="vaccinations" className="space-y-4">
-                    <div className="flex justify-between items-center">
-                      <h2 className="text-lg font-semibold text-forest dark:text-sage-light">Recent Vaccinations</h2>
-                      <Button variant="outline" onClick={() => setShowUploadDialog(true)}>
+                    <div className="flex justify-between items-center pb-2">
+                      <h2 className="text-lg font-bold text-slate-200">Recent Vaccinations</h2>
+                      <Button variant="outline" onClick={() => setShowUploadDialog(true)} className="border-slate-800 bg-slate-900 text-slate-350 hover:bg-slate-800 rounded-xl h-9 text-xs">
                         <Activity className="mr-2 h-4 w-4" />
                         Add Vaccination
                       </Button>
@@ -925,7 +927,7 @@ const HealthRecords = () => {
                     
                     <ScrollArea className="h-[300px] pr-4">
                       <motion.div
-                        className="space-y-3"
+                        className="space-y-2.5"
                         variants={container}
                         initial="hidden"
                         animate="show"
@@ -934,12 +936,12 @@ const HealthRecords = () => {
                           { name: "Influenza Vaccine", date: "Oct 10, 2024", clinic: "Local Health Clinic" },
                           { name: "Tetanus Booster", date: "Jun 18, 2023", clinic: "Family Care Physician" }
                         ].map((vaccination, index) => (
-                          <motion.div key={index} className="flex items-center justify-between p-3 bg-sage-light/10 dark:bg-forest-light/10 hover:bg-sage-light/20 dark:hover:bg-forest-light/20 rounded-lg transition-all border border-sage/10 dark:border-sage/20" variants={item}>
-                            <div>
-                              <p className="font-medium text-forest-dark dark:text-sage-light">{vaccination.name}</p>
-                              <p className="text-sm text-muted-foreground dark:text-sage/70">{vaccination.date} at {vaccination.clinic}</p>
+                          <motion.div key={index} className="flex items-center justify-between p-3.5 bg-slate-900/30 hover:bg-slate-850 rounded-2xl transition-all border border-slate-850 hover:border-slate-800" variants={item}>
+                            <div className="space-y-0.5">
+                              <p className="font-bold text-white text-sm leading-tight">{vaccination.name}</p>
+                              <p className="text-[11px] text-slate-500 font-semibold">{vaccination.date} at {vaccination.clinic}</p>
                             </div>
-                            <Button variant="ghost" size="sm" className="hover:bg-forest/10 dark:hover:bg-sage/10">View</Button>
+                            <Button variant="outline" size="sm" className="border-slate-800 bg-[#151C2C] text-slate-300 hover:bg-slate-800 text-xs rounded-xl h-8.5 px-3.5 font-bold transition-colors">View</Button>
                           </motion.div>
                         ))}
                       </motion.div>
@@ -950,30 +952,30 @@ const HealthRecords = () => {
             </Card>
           </motion.div>
 
-          {/* Upload New Record with improved dark mode visibility */}
+          {/* Upload New Record */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: isLoaded ? 1 : 0, y: isLoaded ? 0 : 20 }}
             transition={{ duration: 0.5, delay: 0.4 }}
             className="mt-6"
           >
-            <Card className="backdrop-blur-sm bg-white/80 dark:bg-forest-dark/80 border-sage/20 dark:border-sage/30 shadow-lg">
-              <CardHeader>
-                <CardTitle className="text-xl font-semibold text-forest dark:text-sage-light">Upload New Document</CardTitle>
+            <Card className="bg-[#151C2C] border-slate-800 shadow-xl rounded-3xl">
+              <CardHeader className="pb-3 border-b border-slate-850">
+                <CardTitle className="text-xl font-bold text-white">Upload New Document</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="pt-6">
                 <div className="space-y-4">
                   <motion.div
                     ref={dropAreaRef}
                     whileHover={{ scale: 1.01 }}
-                    className="border-2 border-dashed border-sage dark:border-sage/50 rounded-lg p-6 flex flex-col items-center justify-center text-center hover:bg-sage/5 dark:hover:bg-sage/10 transition-colors cursor-pointer"
+                    className="border-2 border-dashed border-slate-800 hover:border-slate-700/50 rounded-2xl p-6 flex flex-col items-center justify-center text-center hover:bg-slate-900/10 transition-colors cursor-pointer"
                     onClick={() => !selectedFile && handleUploadClick()}
                   >
                     {selectedFile ? (
                       /* Show preview of selected file */
                       <div className="w-full">
                         <div className="flex justify-between items-center mb-3">
-                          <h4 className="font-medium text-forest-dark dark:text-sage-light">Selected File</h4>
+                          <h4 className="font-bold text-white">Selected File</h4>
                           <Button 
                             variant="ghost" 
                             size="sm" 
@@ -981,33 +983,33 @@ const HealthRecords = () => {
                               e.stopPropagation();
                               resetUpload();
                             }}
-                            className="h-7 w-7 p-0 rounded-full"
+                            className="h-7 w-7 p-0 rounded-full hover:bg-slate-800 text-slate-400 hover:text-white"
                           >
                             <X className="h-4 w-4" />
                           </Button>
                         </div>
                         
                         {filePreview ? (
-                          <div className="flex items-center space-x-3">
-                            <div className="h-20 w-20 rounded-md overflow-hidden">
+                          <div className="flex items-center space-x-3 bg-slate-900/30 p-3 rounded-2xl border border-slate-850">
+                            <div className="h-20 w-20 rounded-xl overflow-hidden border border-slate-800 shrink-0">
                               <img src={filePreview} alt="Preview" className="h-full w-full object-cover"/>
                             </div>
-                            <div className="text-left">
-                              <p className="text-sm font-medium text-forest-dark dark:text-sage-light">{selectedFile.name}</p>
-                              <p className="text-xs text-muted-foreground dark:text-sage/70">
+                            <div className="text-left min-w-0">
+                              <p className="text-sm font-bold text-white truncate">{selectedFile.name}</p>
+                              <p className="text-xs text-slate-500 font-semibold mt-0.5">
                                 {(selectedFile.size / 1024).toFixed(1)} KB 
                                 {documentType && ` • ${documentType}`}
                               </p>
                             </div>
                           </div>
                         ) : (
-                          <div className="flex items-center space-x-3">
-                            <div className="h-14 w-14 rounded-md bg-sage/20 dark:bg-forest-light/20 flex items-center justify-center">
-                              <FileText className="h-6 w-6 text-forest dark:text-sage-light" />
+                          <div className="flex items-center space-x-3 bg-slate-900/30 p-3.5 rounded-2xl border border-slate-850">
+                            <div className="h-14 w-14 rounded-2xl bg-indigo-500/10 flex items-center justify-center shrink-0 border border-indigo-550/10">
+                              <FileText className="h-6 w-6 text-indigo-400" />
                             </div>
-                            <div className="text-left">
-                              <p className="text-sm font-medium text-forest-dark dark:text-sage-light">{selectedFile.name}</p>
-                              <p className="text-xs text-muted-foreground dark:text-sage/70">
+                            <div className="text-left min-w-0">
+                              <p className="text-sm font-bold text-white truncate">{selectedFile.name}</p>
+                              <p className="text-xs text-slate-500 font-semibold mt-0.5">
                                 {(selectedFile.size / 1024).toFixed(1)} KB 
                                 {documentType && ` • ${documentType}`}
                               </p>
@@ -1018,14 +1020,14 @@ const HealthRecords = () => {
                     ) : (
                       /* Show upload prompt */
                       <>
-                        <FileText className="h-10 w-10 text-sage dark:text-sage-light mb-4" />
-                        <h3 className="text-lg font-medium text-forest-dark dark:text-sage-light">Drag and drop files here</h3>
-                        <p className="text-sm text-muted-foreground dark:text-sage/80 max-w-xs mt-2">
-                          Or click to select files from your computer
+                        <FileText className="h-10 w-10 text-indigo-400 mb-4" />
+                        <h3 className="text-base font-bold text-slate-205">Drag and drop files here</h3>
+                        <p className="text-xs text-slate-500 max-w-xs mt-2 font-medium">
+                          Or select files from your local storage
                         </p>
                         <Button 
                           variant="outline" 
-                          className="mt-4 border-sage hover:bg-sage/20 dark:border-sage/50 dark:hover:bg-sage/10"
+                          className="mt-4 border-slate-800 bg-slate-900 hover:bg-slate-800 text-slate-200 rounded-xl h-9 text-xs px-4 font-semibold"
                           onClick={handleUploadClick}
                         >
                           Upload Files
@@ -1045,49 +1047,51 @@ const HealthRecords = () => {
                   
                   {/* Error message */}
                   {uploadError && (
-                    <Alert className="bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800/30">
-                      <AlertCircle className="h-4 w-4 text-red-600 dark:text-red-400" />
-                      <AlertDescription className="text-red-700 dark:text-red-400 ml-2">
+                    <Alert className="bg-red-500/5 dark:bg-red-900/10 border-red-500/20 text-red-400">
+                      <AlertCircle className="h-4 w-4 text-red-500 shrink-0" />
+                      <AlertDescription className="text-red-400 ml-2 font-semibold">
                         {uploadError}
                       </AlertDescription>
                     </Alert>
                   )}
                   
-                  <div className="grid gap-2">
-                    <Label htmlFor="document-type">Document type</Label>
-                    <Select onValueChange={handleFileTypeSelection} value={documentType}>
-                      <SelectTrigger className="w-full" id="document-type" title="Select document type">
-                        <SelectValue placeholder="Select document type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Lab Result">Lab Result</SelectItem>
-                        <SelectItem value="Imaging Report">Imaging Report</SelectItem>
-                        <SelectItem value="Prescription">Prescription</SelectItem>
-                        <SelectItem value="Vaccination Record">Vaccination Record</SelectItem>
-                        <SelectItem value="Other">Other</SelectItem>
-                      </SelectContent>
-                    </Select>
+                  <div className="grid gap-1.5 text-xs">
+                    <Label htmlFor="document-type" className="text-slate-300 font-bold">Document type</Label>
+                    <select 
+                      id="document-type" 
+                      value={documentType}
+                      onChange={(e) => handleFileTypeSelection(e.target.value)}
+                      className="w-full bg-slate-900 border border-slate-800 text-white h-10 rounded-xl px-2.5 focus:ring-blue-600 focus:outline-none"
+                    >
+                      <option value="">Select document type</option>
+                      <option value="Lab Result">Lab Result</option>
+                      <option value="Imaging Report">Imaging Report</option>
+                      <option value="Prescription">Prescription</option>
+                      <option value="Vaccination Record">Vaccination Record</option>
+                      <option value="Other">Other</option>
+                    </select>
                   </div>
                   
-                  <div className="grid gap-2">
-                    <Label htmlFor="additional-notes">Additional Notes (Optional):</Label>
+                  <div className="grid gap-1.5 text-xs">
+                    <Label htmlFor="additional-notes" className="text-slate-300 font-bold">Additional Notes (Optional)</Label>
                     <Input
                       id="additional-notes"
                       value={additionalNotes}
                       onChange={(e) => setAdditionalNotes(e.target.value)}
-                      placeholder="e.g., Annual checkup results"
+                      placeholder="e.g. Doctor consultation comments"
+                      className="bg-slate-900 border-slate-800 text-white h-10 rounded-xl focus-visible:ring-blue-600 shadow-inner"
                     />
                   </div>
                   
                   <Button 
-                    className="w-full bg-forest hover:bg-forest-dark dark:bg-sage dark:text-forest dark:hover:bg-sage-light transition-colors"
+                    className="w-full bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold h-11 border-none shadow-lg shadow-blue-600/20 transition-all"
                     disabled={!selectedFile || !documentType || isUploading}
                     onClick={handleFileUpload}
                   >
                     {isUploading ? (
                       <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Uploading...
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin text-white" />
+                        Saving Record...
                       </>
                     ) : (
                       'Save Record'
@@ -1105,19 +1109,19 @@ const HealthRecords = () => {
             transition={{ duration: 0.5, delay: 0.5 }}
             className="mt-6"
           >
-            <Card className="backdrop-blur-sm bg-white/80 dark:bg-forest-dark/80 border-sage/20 dark:border-sage/30 shadow-lg">
-              <CardHeader>
-                <CardTitle className="text-xl font-semibold text-forest dark:text-sage-light">Your Document Library</CardTitle>
+            <Card className="bg-[#151C2C] border-slate-800 shadow-xl rounded-3xl">
+              <CardHeader className="pb-3 border-b border-slate-850">
+                <CardTitle className="text-xl font-bold text-white">Your Document Library</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="pt-6">
                 {isLoadingDocuments ? (
                   <div className="flex justify-center items-center p-8">
-                    <Loader2 className="h-8 w-8 animate-spin text-sage" />
+                    <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
                   </div>
                 ) : userDocuments.length > 0 ? (
                   <ScrollArea className="h-[300px] pr-4">
                     <motion.div 
-                      className="space-y-3"
+                      className="space-y-2.5"
                       variants={container}
                       initial="hidden"
                       animate="show"
@@ -1125,27 +1129,27 @@ const HealthRecords = () => {
                       {userDocuments.map((doc, index) => (
                         <motion.div 
                           key={doc.id} 
-                          className="flex items-center justify-between p-3 bg-sage-light/10 hover:bg-sage-light/20 dark:bg-forest-light/10 dark:hover:bg-forest-light/20 rounded-lg transition-colors border border-sage/10 dark:border-sage/20"
+                          className="flex items-center justify-between p-3.5 bg-slate-900/30 hover:bg-slate-850 rounded-2xl transition-all border border-slate-850 hover:border-slate-800"
                           variants={item}
                         >
                           <div className="flex items-center space-x-3">
-                            <div className="h-10 w-10 rounded-md bg-sage/20 dark:bg-forest-light/20 flex items-center justify-center">
-                              <FileText className="h-5 w-5 text-forest dark:text-sage-light" />
+                            <div className="h-10 w-10 rounded-xl bg-blue-500/10 flex items-center justify-center shrink-0 border border-blue-500/10">
+                              <FileText className="h-5 w-5 text-blue-500" />
                             </div>
                             <div>
-                              <p className="font-medium text-forest-dark dark:text-sage-light">{doc.file_name}</p>
-                              <p className="text-xs text-muted-foreground dark:text-sage/70">
+                              <p className="font-bold text-white text-sm leading-tight">{doc.file_name}</p>
+                              <p className="text-[10px] text-slate-500 font-semibold mt-0.5">
                                 {(doc.file_size / 1024).toFixed(1)} KB 
                                 {doc.category && ` • ${doc.category}`} • 
                                 {new Date(doc.uploaded_at).toLocaleDateString()}
                               </p>
                             </div>
                           </div>
-                          <div className="flex space-x-1">
+                          <div className="flex space-x-1 shrink-0">
                             <Button 
                               variant="ghost" 
                               size="sm" 
-                              className="hover:bg-forest/10 dark:hover:bg-sage/10"
+                              className="hover:bg-slate-800 text-slate-400 hover:text-white rounded-lg p-1.5 h-8 w-8"
                               onClick={() => downloadDocument(doc.id, doc.file_name)}
                             >
                               <Download className="h-4 w-4" />
@@ -1153,7 +1157,7 @@ const HealthRecords = () => {
                             <Button 
                               variant="ghost" 
                               size="sm" 
-                              className="hover:bg-forest/10 dark:hover:bg-sage/10"
+                              className="hover:bg-slate-800 text-slate-400 hover:text-white rounded-lg p-1.5 h-8 w-8"
                             >
                               <Eye className="h-4 w-4" />
                             </Button>
@@ -1163,10 +1167,10 @@ const HealthRecords = () => {
                     </motion.div>
                   </ScrollArea>
                 ) : (
-                  <div className="text-center p-8 border border-dashed border-sage/50 dark:border-sage/30 rounded-lg">
-                    <FileText className="h-10 w-10 text-sage/50 dark:text-sage/30 mx-auto mb-4" />
-                    <p className="text-muted-foreground dark:text-sage/70">
-                      You don't have any documents yet. Upload one using the form above.
+                  <div className="text-center p-8 border border-dashed border-slate-800 rounded-3xl">
+                    <FileText className="h-10 w-10 text-slate-650 mx-auto mb-4" />
+                    <p className="text-xs text-slate-500 font-medium max-w-xs mx-auto leading-relaxed">
+                      You haven't uploaded any documents yet. Drag and drop a file or capture one via camera to get started.
                     </p>
                   </div>
                 )}
@@ -1189,7 +1193,7 @@ const HealthRecords = () => {
               <X className="h-5 w-5 mr-1" />
               Cancel
             </Button>
-            <h3 className="text-white font-medium">Take a Photo</h3>
+            <h3 className="text-white font-medium">Capture Document</h3>
             <div className="w-[60px]"></div> {/* Spacer for alignment */}
           </div>
           
@@ -1211,7 +1215,7 @@ const HealthRecords = () => {
               className="rounded-full h-16 w-16 bg-white hover:bg-gray-200 flex items-center justify-center shadow-lg"
               onClick={capturePhoto}
             >
-              <div className="h-12 w-12 rounded-full border-4 border-forest" />
+              <div className="h-12 w-12 rounded-full border-4 border-blue-600" />
             </Button>
           </div>
           
@@ -1222,30 +1226,30 @@ const HealthRecords = () => {
       
       {/* Upload Type Selection Dialog */}
       <Dialog open={showUploadDialog} onOpenChange={setShowUploadDialog}>
-        <DialogContent className="sm:max-w-md" aria-describedby="upload-dialog-description">
+        <DialogContent className="sm:max-w-md bg-[#151C2C] border-slate-800 text-white rounded-3xl" aria-describedby="upload-dialog-description">
           <DialogHeader>
-            <DialogTitle className="text-forest dark:text-sage-light">How would you like to upload?</DialogTitle>
-            <DialogDescription id="upload-dialog-description">
-              Choose how you want to add your document.
+            <DialogTitle className="text-white font-bold text-lg">Choose Upload Source</DialogTitle>
+            <DialogDescription id="upload-dialog-description" className="text-slate-400 text-xs">
+              Select how you would like to select or capture your diagnostic file.
             </DialogDescription>
           </DialogHeader>
-          <div className="grid grid-cols-2 gap-4 py-4">
+          <div className="grid grid-cols-2 gap-4 py-4 text-xs">
             <Button 
               variant="outline" 
-              className="flex flex-col items-center justify-center h-32 p-4"
+              className="flex flex-col items-center justify-center h-32 p-4 bg-[#151C2C] border-slate-800 hover:border-blue-500/30 text-slate-300 hover:text-white transition-all rounded-2xl shadow-lg border"
               onClick={() => handleUploadOption('file')}
             >
-              <FileText className="h-8 w-8 mb-2 text-forest dark:text-sage" />
-              <span>Select File</span>
+              <FileText className="h-8 w-8 mb-2 text-blue-400" />
+              <span className="font-bold">Browse Files</span>
             </Button>
             
             <Button 
               variant="outline" 
-              className="flex flex-col items-center justify-center h-32 p-4"
+              className="flex flex-col items-center justify-center h-32 p-4 bg-[#151C2C] border-slate-800 hover:border-blue-500/30 text-slate-300 hover:text-white transition-all rounded-2xl shadow-lg border"
               onClick={() => handleUploadOption('camera')}
             >
-              <Camera className="h-8 w-8 mb-2 text-forest dark:text-sage" />
-              <span>Take Photo</span>
+              <Camera className="h-8 w-8 mb-2 text-blue-400" />
+              <span className="font-bold">Use Camera</span>
             </Button>
           </div>
         </DialogContent>

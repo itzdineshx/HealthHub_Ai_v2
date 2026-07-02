@@ -46,7 +46,7 @@ interface MealPlan {
     breakfast: typeof SAMPLE_MEALS.breakfast[0] | null;
     lunch: typeof SAMPLE_MEALS.lunch[0] | null;
     dinner: typeof SAMPLE_MEALS.dinner[0] | null;
-    snacks: typeof SAMPLE_MEALS.snacks[0][] | [];
+    snacks: Array<typeof SAMPLE_MEALS.snacks[0]>;
   }
 }
 
@@ -125,19 +125,24 @@ const MealPlanner = () => {
 
   return (
     <Layout>
-      <div className="container mx-auto px-4 py-12">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
+      <div className="space-y-6 text-slate-105 pb-6">
+        <motion.div 
+          initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="mb-8 text-center"
+          className="relative bg-gradient-to-r from-[#1E1B4B]/80 to-[#0F172A]/80 border border-blue-900/30 rounded-3xl p-6 md:p-8 overflow-hidden shadow-2xl backdrop-blur-md"
         >
-          <h1 className="text-4xl font-bold mb-3 text-forest dark:text-sage-light">Meal Planner</h1>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            Generate a personalized weekly meal plan based on your dietary preferences, restrictions, and caloric needs
-          </p>
+          <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 rounded-full blur-[80px] pointer-events-none" />
+          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6 text-left">
+            <div className="space-y-2">
+              <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight bg-gradient-to-r from-white via-slate-100 to-blue-400 bg-clip-text text-transparent">
+                Meal Planner & Nutrition
+              </h1>
+              <p className="text-slate-400 text-sm max-w-xl leading-relaxed">
+                Generate a personalized weekly meal plan based on your dietary preferences, restrictions, and caloric needs.
+              </p>
+            </div>
+          </div>
         </motion.div>
-
         <Tabs defaultValue="generator" className="w-full">
           <TabsList className="grid w-full max-w-md mx-auto mb-8 grid-cols-2">
             <TabsTrigger value="generator">Generate Plan</TabsTrigger>

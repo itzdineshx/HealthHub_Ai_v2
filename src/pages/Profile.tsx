@@ -88,7 +88,7 @@ const Profile = () => {
           <div className="md:w-3/4">
             <Card>
               <CardHeader>
-                <CardTitle className="text-2xl font-bold text-forest">
+                <CardTitle className="text-2xl font-bold text-blue-500">
                   {activeTab === "personal" && "Personal Information"}
                   {activeTab === "settings" && "Account Settings"}
                   {activeTab === "security" && "Security Settings"}

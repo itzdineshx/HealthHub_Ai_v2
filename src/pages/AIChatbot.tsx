@@ -181,34 +181,6 @@ const AIChatbot = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Sidebar with example questions */}
-          <div className="lg:col-span-1">
-            <Card className="sticky top-24">
-              <CardHeader>
-                <CardTitle className="text-lg font-semibold text-forest flex items-center">
-                  <BrainCircuit className="mr-2 h-5 w-5" />
-                  Example Questions
-                </CardTitle>
-                <CardDescription>
-                  Click on any question to get started
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  {getExampleQuestions().map((question, index) => (
-                    <Button 
-                      key={index} 
-                      variant="outline" 
-                      className="w-full justify-start text-left h-auto py-2 font-normal text-sm"
-                      onClick={() => handleExampleClick(question)}
-                    >
-                      {question}
-                    </Button>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
           
           {/* Main chat area */}
           <div className="lg:col-span-3">

@@ -47,6 +47,11 @@ const Care = lazy(() => import("./pages/Care"));
 const Medications = lazy(() => import("./pages/Medications"));
 const FamilyHealth = lazy(() => import("./pages/FamilyHealth"));
 const Emergency = lazy(() => import("./pages/Emergency"));
+const DoctorPatients = lazy(() => import("./pages/DoctorPatients"));
+const DoctorCalendar = lazy(() => import("./pages/DoctorCalendar"));
+const DoctorAnalytics = lazy(() => import("./pages/DoctorAnalytics"));
+const AdminUsers = lazy(() => import("./pages/AdminUsers"));
+const AdminSystem = lazy(() => import("./pages/AdminSystem"));
 
 // Protected route component
 interface ProtectedRouteProps {
@@ -96,7 +101,7 @@ const App = () => {
           <Route path="care" element={<Care />} />
           <Route path="medications" element={<Medications />} />
           <Route path="fitness" element={<TrainingDashboard />} />
-          <Route path="nutrition" element={<Diet />} />
+          <Route path="nutrition" element={<MealPlanner />} />
           <Route path="records" element={<HealthRecords />} />
           <Route path="family" element={<FamilyHealth />} />
           <Route path="emergency" element={<Emergency />} />
@@ -108,17 +113,17 @@ const App = () => {
         {/* Doctor Workspace */}
         <Route path="doctor">
           <Route path="queue" element={<DoctorPanel />} />
-          <Route path="patients" element={<WorkspaceShell title="Patient Profiles" description="Comprehensive EHR and patient timelines." icon={Users} colorClass="bg-medical-blue/10 text-medical-blue" />} />
-          <Route path="calendar" element={<WorkspaceShell title="Schedule" description="Clinical appointment management." icon={Calendar} colorClass="bg-warning-amber/10 text-warning-amber" />} />
-          <Route path="analytics" element={<WorkspaceShell title="Analytics" description="Practice performance metrics." icon={Activity} colorClass="bg-info-cyan/10 text-info-cyan" />} />
+          <Route path="patients" element={<DoctorPatients />} />
+          <Route path="calendar" element={<DoctorCalendar />} />
+          <Route path="analytics" element={<DoctorAnalytics />} />
           <Route index element={<Navigate to="/doctor/queue" replace />} />
         </Route>
 
         {/* Admin Workspace */}
         <Route path="admin">
           <Route path="overview" element={<AdminPanel />} />
-          <Route path="users" element={<WorkspaceShell title="Directory" description="Enterprise user and role management." icon={Users} colorClass="bg-medical-blue/10 text-medical-blue" />} />
-          <Route path="system" element={<WorkspaceShell title="System Health" description="Infrastructure and server diagnostics." icon={Cpu} colorClass="bg-emerald-green/10 text-emerald-green" />} />
+          <Route path="users" element={<AdminUsers />} />
+          <Route path="system" element={<AdminSystem />} />
           <Route index element={<Navigate to="/admin/overview" replace />} />
         </Route>
         {/* Legacy Routes - Now wrapped in OSLayout so they share the dashboard style */}

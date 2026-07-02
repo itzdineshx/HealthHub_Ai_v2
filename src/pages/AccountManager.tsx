@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -80,8 +81,24 @@ const AccountManager = () => {
 
   return (
     <Layout>
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold text-forest mb-6">Account Settings</h1>
+      <div className="space-y-6 text-slate-100 max-w-[1600px] mx-auto pb-6">
+        <motion.div 
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="relative bg-gradient-to-r from-[#1E1B4B]/80 to-[#0F172A]/80 border border-blue-900/30 rounded-3xl p-6 md:p-8 overflow-hidden shadow-2xl backdrop-blur-md"
+        >
+          <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 rounded-full blur-[80px] pointer-events-none" />
+          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6 text-left">
+            <div className="space-y-2">
+              <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight bg-gradient-to-r from-white via-slate-100 to-blue-400 bg-clip-text text-transparent">
+                Account Settings
+              </h1>
+              <p className="text-slate-400 text-sm max-w-xl leading-relaxed">
+                Update your login credentials, manage notifications, adjust privacy levels, and review billing statements.
+              </p>
+            </div>
+          </div>
+        </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           {/* Sidebar */}
